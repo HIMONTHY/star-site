@@ -24,3 +24,39 @@ body {
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
 }
+
+/* ============================
+   BACKGROUND ANIMATIONS
+============================ */
+
+/* Floating particles */
+@keyframes floaty {
+  0% { transform: translateY(0px); }
+  50% { transform: translateY(-12px); }
+  100% { transform: translateY(0px); }
+}
+
+.animate-float {
+  animation: floaty 7s ease-in-out infinite;
+}
+
+/* Moving glow blob */
+@keyframes glowMove {
+  0% { transform: translate(-50%, -40%) scale(1); }
+  50% { transform: translate(-45%, -55%) scale(1.1); }
+  100% { transform: translate(-50%, -40%) scale(1); }
+}
+
+.animate-glow {
+  animation: glowMove 18s ease-in-out infinite;
+}
+
+/* Slow scrolling grid */
+@keyframes gridMove {
+  from { background-position: 0 0; }
+  to { background-position: 140px 140px; }
+}
+
+.animate-grid {
+  animation: gridMove 35s linear infinite;
+}
