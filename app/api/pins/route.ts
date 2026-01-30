@@ -6,10 +6,14 @@ const store =
 
 (globalThis as any).__STAR_STORE__ = store;
 
+
+// GET all pins
 export async function GET() {
   return NextResponse.json({ pins: store.pins });
 }
 
+
+// CREATE new pin
 export async function POST() {
   const pin = nanoid(6).toUpperCase();
 
@@ -23,4 +27,19 @@ export async function POST() {
   store.pins.unshift(row);
 
   return NextResponse.json({ pin });
+}
+
+
+// VERIFY pin
+export async function PUT(req: Request) {
+  const body = await req.json();
+  const pin = String(body?.pin || "");
+
+  const found = store.pins.find(
+    (p: any) => p.pin === pin
+  );
+
+  return NextResponse.json({
+    ok: !!found
+  });
 }
