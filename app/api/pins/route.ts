@@ -1,19 +1,26 @@
 import { nanoid } from "nanoid";
 import { NextResponse } from "next/server";
 
-const store = (globalThis as any).__STAR_STORE__ || { pins: [] };
+type PinRow = {
+  id: string;
+  pin: string;
+  createdAt: string;
+  hasResults: boolean;
+};
+
+const store = (globalThis as any).__STAR_STORE__ || { pins: [] as PinRow[] };
 (globalThis as any).__STAR_STORE__ = store;
 
-// GET all pins
+// LIST PINS (Dashboard uses this)
 export async function GET() {
   return NextResponse.json({ pins: store.pins });
 }
 
-// CREATE new pin
+// CREATE PIN (Dashboard uses this)
 export async function POST() {
   const pin = nanoid(6).toUpperCase();
 
-  const row = {
+  const row: PinRow = {
     id: nanoid(10),
     pin,
     createdAt: new Date().toISOString(),
@@ -25,12 +32,12 @@ export async function POST() {
   return NextResponse.json({ pin });
 }
 
-// VERIFY pin (Python will call this)
+// VERIFY PIN (Python uses this)
 export async function PUT(req: Request) {
-  const body = await req.json();
+  const body = await req.json().catch(() => ({}));
   const pin = String(body?.pin || "").toUpperCase().trim();
 
-  const found = store.pins.find((p: any) => p.pin === pin);
+  const found = store.pins.find((p) => p.pin === pin);
 
   return NextResponse.json({ ok: !!found });
 }
