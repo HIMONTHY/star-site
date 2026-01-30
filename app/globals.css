@@ -26,7 +26,7 @@ body {
 }
 
 /* ============================
-   BACKGROUND ANIMATIONS
+   BACKGROUND ANIMATIONS (WORKING)
 ============================ */
 
 /* Floating particles */
@@ -35,28 +35,34 @@ body {
   50% { transform: translateY(-12px); }
   100% { transform: translateY(0px); }
 }
-
 .animate-float {
-  animation: floaty 7s ease-in-out infinite;
+  animation: floaty 7s ease-in-out infinite !important;
 }
 
-/* Moving glow blob */
+/* Glow drift (use a dedicated class so transforms don’t conflict) */
 @keyframes glowMove {
-  0% { transform: translate(-50%, -40%) scale(1); }
-  50% { transform: translate(-45%, -55%) scale(1.1); }
+  0%   { transform: translate(-50%, -40%) scale(1); }
+  50%  { transform: translate(-45%, -55%) scale(1.12); }
   100% { transform: translate(-50%, -40%) scale(1); }
 }
 
-.animate-glow {
-  animation: glowMove 18s ease-in-out infinite;
+.glow-blob {
+  position: absolute;
+  left: 50%;
+  top: -240px;
+  width: 900px;
+  height: 700px;
+  border-radius: 9999px;
+  background: rgba(16, 185, 129, 0.15);
+  filter: blur(120px);
+  animation: glowMove 18s ease-in-out infinite !important;
 }
 
-/* Slow scrolling grid */
+/* Grid slow scroll */
 @keyframes gridMove {
   from { background-position: 0 0; }
   to { background-position: 140px 140px; }
 }
-
-.animate-grid {
-  animation: gridMove 35s linear infinite;
+.grid-move {
+  animation: gridMove 35s linear infinite !important;
 }
