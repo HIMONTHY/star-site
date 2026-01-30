@@ -49,10 +49,32 @@ export default function DashboardPage() {
   }, [pins]);
 
   return (
-    <main className="min-h-screen bg-[#0a0d11] text-white">
+    <main className="min-h-screen bg-[#0a0d11] text-white relative overflow-hidden">
+
+      {/* ===== MOVING BACKGROUND (STEP 1 ADDED) ===== */}
+      <div className="pointer-events-none absolute inset-0">
+
+        {/* Moving glow blob */}
+        <div className="glow-blob" />
+
+        {/* Dark vignette */}
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,rgba(0,0,0,0)_0%,rgba(0,0,0,0.55)_55%,rgba(0,0,0,0.92)_100%)]" />
+
+        {/* Animated grid */}
+        <div
+          className="grid-move absolute inset-0 opacity-[0.15]
+          [background-image:linear-gradient(to_right,rgba(255,255,255,0.08)_1px,transparent_1px),
+          linear-gradient(to_bottom,rgba(255,255,255,0.08)_1px,transparent_1px)]
+          [background-size:70px_70px]"
+        />
+
+        <Particles />
+      </div>
+
+      {/* ===== CONTENT (ON TOP OF BACKGROUND) ===== */}
 
       {/* TOP NAV */}
-      <div className="border-b border-white/10 bg-black/60 backdrop-blur">
+      <div className="relative z-10 border-b border-white/10 bg-black/60 backdrop-blur">
         <div className="mx-auto max-w-7xl px-6 py-4 flex items-center justify-between">
           <div className="text-lg font-semibold">Star</div>
 
@@ -69,10 +91,10 @@ export default function DashboardPage() {
         </div>
       </div>
 
-      <div className="mx-auto max-w-7xl px-6 py-8 grid gap-6 md:grid-cols-[230px_1fr]">
+      <div className="relative z-10 mx-auto max-w-7xl px-6 py-8 grid gap-6 md:grid-cols-[230px_1fr]">
 
         {/* SIDEBAR */}
-        <aside className="rounded-2xl border border-white/10 bg-[#0f141b] p-4 h-fit">
+        <aside className="rounded-2xl border border-white/10 bg-[#0f141b]/80 backdrop-blur p-4 h-fit">
           <SidebarItem label="Dashboard" active />
           <SidebarItem label="My Pins" />
         </aside>
@@ -97,9 +119,9 @@ export default function DashboardPage() {
             </button>
           </div>
 
-          {/* LATEST PIN BOX */}
+          {/* LATEST PIN */}
           {latest && (
-            <div className="mt-6 rounded-2xl border border-emerald-500/30 bg-emerald-500/10 p-5">
+            <div className="mt-6 rounded-2xl border border-emerald-500/30 bg-emerald-500/10 p-5 backdrop-blur">
               <div className="text-sm text-white/80 mb-2">
                 New pin — give this to the person being checked:
               </div>
@@ -116,10 +138,6 @@ export default function DashboardPage() {
                   Copy
                 </button>
               </div>
-
-              <div className="mt-2 text-xs text-white/60">
-                They enter this in Star Mac, run the scan, and you’ll see results here.
-              </div>
             </div>
           )}
 
@@ -131,7 +149,7 @@ export default function DashboardPage() {
           </div>
 
           {/* TABLE */}
-          <div className="mt-8 rounded-2xl border border-white/10 bg-[#0f141b] p-6">
+          <div className="mt-8 rounded-2xl border border-white/10 bg-[#0f141b]/80 backdrop-blur p-6">
 
             <div className="flex items-center justify-between mb-4">
               <input
@@ -161,10 +179,7 @@ export default function DashboardPage() {
                 </div>
               ) : (
                 pins.map(p => (
-                  <div
-                    key={p.id}
-                    className="grid grid-cols-4 py-4 text-sm items-center"
-                  >
+                  <div key={p.id} className="grid grid-cols-4 py-4 text-sm items-center">
                     <div className="font-mono tracking-widest text-emerald-400">
                       {p.pin}
                     </div>
@@ -178,7 +193,6 @@ export default function DashboardPage() {
                     </div>
 
                     <div className="text-white/50">—</div>
-
                     <div className="text-white/50">—</div>
                   </div>
                 ))
@@ -208,9 +222,32 @@ function SidebarItem({ label, active }: { label: string; active?: boolean }) {
 
 function Stat({ label, value }: { label: string; value: number }) {
   return (
-    <div className="rounded-2xl border border-white/10 bg-[#0f141b] p-5">
+    <div className="rounded-2xl border border-white/10 bg-[#0f141b]/80 backdrop-blur p-5">
       <div className="text-sm text-white/60">{label}</div>
       <div className="mt-1 text-2xl font-bold">{value}</div>
+    </div>
+  );
+}
+
+function Particles() {
+  const dots = Array.from({ length: 40 }, (_, i) => i);
+
+  return (
+    <div className="absolute inset-0">
+      {dots.map((i) => (
+        <span
+          key={i}
+          className="absolute rounded-full bg-emerald-200/30 blur-[0.3px] animate-float"
+          style={{
+            width: `${2 + (i % 3)}px`,
+            height: `${2 + (i % 3)}px`,
+            left: `${(i * 97) % 100}%`,
+            top: `${(i * 53) % 100}%`,
+            animationDelay: `${(i % 10) * 0.35}s`,
+            opacity: 0.25 + (i % 5) * 0.12,
+          }}
+        />
+      ))}
     </div>
   );
 }
