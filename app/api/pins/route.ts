@@ -1,17 +1,13 @@
 import { nanoid } from "nanoid";
 import { NextResponse } from "next/server";
 
-const store =
-  (globalThis as any).__STAR_STORE__ || { pins: [] };
-
+const store = (globalThis as any).__STAR_STORE__ || { pins: [] };
 (globalThis as any).__STAR_STORE__ = store;
-
 
 // GET all pins
 export async function GET() {
   return NextResponse.json({ pins: store.pins });
 }
-
 
 // CREATE new pin
 export async function POST() {
@@ -29,17 +25,12 @@ export async function POST() {
   return NextResponse.json({ pin });
 }
 
-
-// VERIFY pin
+// VERIFY pin (Python will call this)
 export async function PUT(req: Request) {
   const body = await req.json();
-  const pin = String(body?.pin || "");
+  const pin = String(body?.pin || "").toUpperCase().trim();
 
-  const found = store.pins.find(
-    (p: any) => p.pin === pin
-  );
+  const found = store.pins.find((p: any) => p.pin === pin);
 
-  return NextResponse.json({
-    ok: !!found
-  });
+  return NextResponse.json({ ok: !!found });
 }
