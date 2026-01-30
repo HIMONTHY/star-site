@@ -1,29 +1,87 @@
-export default function Home() {
+import Link from "next/link";
+
+export default function HomePage() {
   return (
-    <main className="min-h-screen bg-[#faf9f7] flex flex-col items-center justify-center px-6 text-center">
-      <h1 className="text-6xl md:text-7xl font-serif mb-6">
-        STAR
-      </h1>
+    <main className="min-h-screen bg-black text-white">
+      <div className="mx-auto max-w-5xl px-6 py-10">
+        <header className="flex items-center justify-between">
+          <Link href="/" className="text-lg font-semibold tracking-tight">
+            Star
+          </Link>
 
-      <p className="text-lg md:text-xl text-gray-600 mb-10 max-w-xl">
-        Beautiful. Intentional. Designed with purpose.
-      </p>
+          <nav className="flex items-center gap-5 text-sm text-white/80">
+            <Link href="/features" className="hover:text-white">Features</Link>
+            <Link href="/terms" className="hover:text-white">Terms</Link>
+            <Link href="/privacy" className="hover:text-white">Privacy</Link>
+            <Link
+              href="/dashboard"
+              className="rounded-xl bg-white/10 px-4 py-2 hover:bg-white/15"
+            >
+              Dashboard
+            </Link>
+          </nav>
+        </header>
 
-      <div className="flex gap-4">
-        <a
-          href="#"
-          className="border border-black px-6 py-3 text-black hover:bg-black hover:text-white transition"
-        >
-          Explore
-        </a>
+        <section className="pt-16">
+          <h1 className="text-4xl md:text-6xl font-bold leading-tight">
+            Roblox screenshare & results dashboard
+          </h1>
 
-        <a
-          href="#"
-          className="px-6 py-3 text-gray-700 hover:text-black transition"
-        >
-          Contact
-        </a>
+          <p className="mt-5 max-w-2xl text-white/70 text-lg">
+            Generate a PIN on the site, give it to the person being checked.
+            They run the scan, and you view results by category.
+          </p>
+
+          <div className="mt-8 flex flex-wrap gap-3">
+            <a
+              href="https://discord.gg/yourInvite"
+              target="_blank"
+              className="rounded-xl bg-white text-black px-5 py-3 font-semibold hover:opacity-90"
+              rel="noreferrer"
+            >
+              Join Discord
+            </a>
+
+            <Link
+              href="/dashboard"
+              className="rounded-xl bg-white/10 px-5 py-3 font-semibold hover:bg-white/15"
+            >
+              Sign in → Generate PIN
+            </Link>
+          </div>
+
+          <div className="mt-10 grid gap-4 md:grid-cols-3">
+            <Card title="Step 1" text="Sign in with Discord → generate a PIN." />
+            <Card title="Step 2" text="Give the PIN to the person being checked." />
+            <Card title="Step 3" text="When the scan finishes, view results by category." />
+          </div>
+
+          <div className="mt-14 rounded-2xl border border-white/10 bg-white/5 p-6">
+            <p className="text-sm text-white/70">
+              Mac • App-based scan • Pin-based flow
+            </p>
+          </div>
+        </section>
+
+        <footer className="mt-20 border-t border-white/10 pt-8 text-sm text-white/60">
+          <div className="flex flex-wrap items-center justify-between gap-4">
+            <span>© {new Date().getFullYear()} Star</span>
+            <div className="flex gap-4">
+              <Link href="/terms" className="hover:text-white">Terms</Link>
+              <Link href="/privacy" className="hover:text-white">Privacy</Link>
+            </div>
+          </div>
+        </footer>
       </div>
     </main>
+  );
+}
+
+function Card({ title, text }: { title: string; text: string }) {
+  return (
+    <div className="rounded-2xl border border-white/10 bg-white/5 p-5">
+      <div className="text-sm font-semibold">{title}</div>
+      <p className="mt-2 text-white/70">{text}</p>
+    </div>
   );
 }
