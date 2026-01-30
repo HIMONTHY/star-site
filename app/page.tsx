@@ -3,11 +3,21 @@ import React from "react";
 export default function HomePage() {
   return (
     <main className="min-h-screen bg-[#070A0D] text-white overflow-hidden relative">
-      {/* Background effects */}
+      {/* Background effects (NOW MOVING) */}
       <div className="pointer-events-none absolute inset-0">
-        <div className="absolute left-1/2 top-[-240px] h-[700px] w-[900px] -translate-x-1/2 rounded-full bg-emerald-500/15 blur-[120px]" />
+        {/* Moving glow blob */}
+        <div className="absolute left-1/2 top-[-240px] h-[700px] w-[900px] -translate-x-1/2 rounded-full bg-emerald-500/15 blur-[120px] animate-glow" />
+
+        {/* Dark vignette */}
         <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,rgba(0,0,0,0)_0%,rgba(0,0,0,0.55)_55%,rgba(0,0,0,0.92)_100%)]" />
-        <div className="absolute inset-0 opacity-[0.18] [background-image:linear-gradient(to_right,rgba(255,255,255,0.08)_1px,transparent_1px),linear-gradient(to_bottom,rgba(255,255,255,0.08)_1px,transparent_1px)] [background-size:70px_70px]" />
+
+        {/* Animated grid */}
+        <div
+          className="absolute inset-0 opacity-[0.18] animate-grid
+          [background-image:linear-gradient(to_right,rgba(255,255,255,0.08)_1px,transparent_1px),linear-gradient(to_bottom,rgba(255,255,255,0.08)_1px,transparent_1px)]
+          [background-size:70px_70px]"
+        />
+
         <Particles />
       </div>
 
@@ -126,7 +136,7 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* WHY CHOOSE (ADDED) */}
+      {/* WHY CHOOSE */}
       <section id="why" className="relative z-10">
         <div className="mx-auto max-w-6xl px-6 pb-20">
           <div className="text-center">
@@ -141,33 +151,33 @@ export default function HomePage() {
           <div className="mt-10 grid gap-5 md:grid-cols-3">
             <WhyCard
               icon="shield"
-              title="Undetected"
-              desc="Clean flow and reliable structure with constant improvements to keep everything smooth."
+              title="Secure Pins"
+              desc="Generate unique PINs for every check so each session stays organized and clean."
             />
             <WhyCard
               icon="eye"
-              title="Stream Safe"
-              desc="A clean dashboard experience designed to stay simple and organized while you work."
+              title="Clear Results"
+              desc="See scan status and results by category without confusion or clutter."
             />
             <WhyCard
               icon="bolt"
               title="Easy Setup"
-              desc="Get started in minutes with a simple PIN-based system and clear steps."
+              desc="Get started fast with a simple flow that just works."
             />
             <WhyCard
               icon="refresh"
               title="Auto Updates"
-              desc="Stay up to date with refresh-friendly UI and live flow improvements."
+              desc="Refresh-friendly layout so you’re always seeing the latest progress."
             />
             <WhyCard
               icon="clock"
-              title="99.9% Uptime"
-              desc="Built to feel fast and stable so you can rely on it whenever you need it."
+              title="Reliable"
+              desc="Built to stay responsive and stable when you need it."
             />
             <WhyCard
               icon="headset"
-              title="24/7 Support"
-              desc="Need help? Join the Discord and get support anytime."
+              title="Support Ready"
+              desc="Need help? Your Discord support channel stays open and ready."
             />
           </div>
         </div>
@@ -376,7 +386,7 @@ function HeadsetIcon() {
 }
 
 function Particles() {
-  const dots = Array.from({ length: 36 }, (_, i) => i);
+  const dots = Array.from({ length: 40 }, (_, i) => i);
 
   return (
     <div className="absolute inset-0">
@@ -389,7 +399,7 @@ function Particles() {
             height: `${2 + (i % 3)}px`,
             left: `${(i * 97) % 100}%`,
             top: `${(i * 53) % 100}%`,
-            animationDelay: `${(i % 10) * 0.3}s`,
+            animationDelay: `${(i % 10) * 0.35}s`,
             opacity: 0.25 + (i % 5) * 0.12,
           }}
         />
