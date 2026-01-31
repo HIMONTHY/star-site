@@ -1,13 +1,13 @@
 import { NextResponse } from "next/server";
 
 const CLIENT_ID = "1467024882171908307";
-const CLIENT_SECRET = "T4eTyKR_MN-6VaH8Q2RiGuilp1EmBfVU";
+const CLIENT_SECRET = "T4eTyKR_MN-6VaH8Q2RiGuilp1EmBfVU"; // move to env later
 const REDIRECT_URI = "https://star-site-psi.vercel.app/api/auth/callback";
 
-/* ✅ ONLY THESE DISCORD IDS CAN ACCESS */
+/* 🔐 ONLY THESE USERS CAN ACCESS */
 const ALLOWED_USERS = [
-  "123456789012345678", // YOUR Discord ID
-  // "111111111111111111", // add more later
+  "123456789012345678", // fake for testing
+  // add real ones later
 ];
 
 export async function GET(req: Request) {
@@ -18,7 +18,7 @@ export async function GET(req: Request) {
     return NextResponse.json({ error: "No code" }, { status: 400 });
   }
 
-  // 🔁 Get access token
+  // 🔁 Exchange code for token
   const tokenRes = await fetch("https://discord.com/api/oauth2/token", {
     method: "POST",
     headers: { "Content-Type": "application/x-www-form-urlencoded" },
@@ -33,7 +33,7 @@ export async function GET(req: Request) {
 
   const tokenData = await tokenRes.json();
 
-  // 👤 Get Discord user
+  // 👤 Fetch Discord user
   const userRes = await fetch("https://discord.com/api/users/@me", {
     headers: {
       Authorization: `Bearer ${tokenData.access_token}`,
@@ -42,36 +42,28 @@ export async function GET(req: Request) {
 
   const user = await userRes.json();
 
-  const res = NextResponse.redirect(
-    "https://star-site-psi.vercel.app/dashboard"
-  );
+  // 🔒 HARD WHITELIST (ONLY HERE DO WE SET COOKIES)
+  if (ALLOWED_USERS.includes(user.id)) {
 
-  // logged in cookie
-  res.cookies.set("star_user", "true", { path: "/" });
+    const res = NextResponse.redirect(
+      "https://star-site-psi.vercel.app/dashboard"
+    );
 
-  // 🔒 HARD WHITELIST CHECK
-if (ALLOWED_USERS.includes(user.id)) {
+    res.cookies.set("star_user", "true", { path: "/" });
+    res.cookies.set("discord_verified", "true", { path: "/" });
 
-  const res = NextResponse.redirect(
-    "https://star-site-psi.vercel.app/dashboard"
-  );
+    return res;
 
-  // ONLY approved users get logged in
-  res.cookies.set("star_user", "true", { path: "/" });
-  res.cookies.set("discord_verified", "true", { path: "/" });
+  } else {
 
-  return res;
+    const res = NextResponse.redirect(
+      "https://star-site-psi.vercel.app/access-denied"
+    );
 
-} else {
+    // ❌ DO NOT LOG THEM IN
+    res.cookies.set("star_user", "false", { path: "/" });
+    res.cookies.set("discord_verified", "false", { path: "/" });
 
-  // 🚫 NOT ALLOWED → NO LOGIN COOKIE AT ALL
-  const res = NextResponse.redirect(
-    "https://star-site-psi.vercel.app/access-denied"
-  );
-
-  res.cookies.set("star_user", "false", { path: "/" });
-  res.cookies.set("discord_verified", "false", { path: "/" });
-
-  return res;
+    return res;
+  }
 }
-
