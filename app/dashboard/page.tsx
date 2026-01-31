@@ -14,6 +14,11 @@ export default function DashboardPage() {
   const [loading, setLoading] = useState(false);
   const [latest, setLatest] = useState<PinRow | null>(null);
   const [copied, setCopied] = useState(false);
+  const [loggedIn, setLoggedIn] = useState(false);
+
+  useEffect(() => {
+    setLoggedIn(document.cookie.includes("star_user=true"));
+  }, []);
 
   async function loadPins() {
     const res = await fetch("/api/pins", { cache: "no-store" });
@@ -95,13 +100,22 @@ export default function DashboardPage() {
   </a>
 
   {/* DISCORD LOGIN BUTTON */}
+
+{loggedIn ? (
+  <a
+    href="/api/auth/logout"
+    className="ml-2 flex items-center gap-2 rounded-xl bg-zinc-800 px-4 py-2 font-semibold text-white hover:bg-zinc-700 transition border border-white/10"
+  >
+    ↩ Sign out
+  </a>
+) : (
   <a
     href="/api/auth/login"
     className="ml-2 flex items-center gap-2 rounded-xl bg-indigo-500 px-4 py-2 font-semibold text-white hover:opacity-90 transition shadow-[0_15px_60px_rgba(99,102,241,0.35)]"
   >
     → Discord login
   </a>
-</div>
+)}
 
         </div>
       </div>
