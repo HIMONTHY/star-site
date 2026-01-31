@@ -1,18 +1,24 @@
 import { NextResponse } from "next/server";
 
 const CLIENT_ID = "1467024882171908307";
-const CLIENT_SECRET = "T4eTyKR_MN-6VaH8Q2RiGuilp1EmBfVU"; // from Discord Dev Portal
+const CLIENT_SECRET = "YOUR_CLIENT_SECRET";
 const REDIRECT_URI = "https://star-site-psi.vercel.app/api/auth/callback";
+
+/* ✅ ONLY THESE DISCORD IDS CAN ACCESS */
+const ALLOWED_USERS = [
+  "123456789012345678", // YOUR Discord ID
+  // "111111111111111111", // add more later
+];
 
 export async function GET(req: Request) {
   const { searchParams } = new URL(req.url);
   const code = searchParams.get("code");
 
   if (!code) {
-    return NextResponse.json({ error: "No code provided" }, { status: 400 });
+    return NextResponse.json({ error: "No code" }, { status: 400 });
   }
 
-  // 🔁 Exchange code for access token
+  // 🔁 Get access token
   const tokenRes = await fetch("https://discord.com/api/oauth2/token", {
     method: "POST",
     headers: { "Content-Type": "application/x-www-form-urlencoded" },
@@ -27,31 +33,24 @@ export async function GET(req: Request) {
 
   const tokenData = await tokenRes.json();
 
-  const accessToken = tokenData.access_token;
-
-  // 👤 Fetch Discord user info
+  // 👤 Get Discord user
   const userRes = await fetch("https://discord.com/api/users/@me", {
     headers: {
-      Authorization: `Bearer ${accessToken}`,
+      Authorization: `Bearer ${tokenData.access_token}`,
     },
   });
 
   const user = await userRes.json();
 
-  /*
-    user.verified === true means email verified
-    user.id is Discord ID
-  */
-
   const res = NextResponse.redirect(
     "https://star-site-psi.vercel.app/dashboard"
   );
 
-  // Logged in
+  // logged in cookie
   res.cookies.set("star_user", "true", { path: "/" });
 
-  // REAL verification check
-  if (user.verified === true) {
+  // 🔒 HARD CHECK BY DISCORD ID
+  if (ALLOWED_USERS.includes(user.id)) {
     res.cookies.set("discord_verified", "true", { path: "/" });
   } else {
     res.cookies.set("discord_verified", "false", { path: "/" });
