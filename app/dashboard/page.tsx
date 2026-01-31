@@ -14,7 +14,7 @@ export default function DashboardPage() {
   const [loading, setLoading] = useState(false);
   const [latest, setLatest] = useState<PinRow | null>(null);
   const [copied, setCopied] = useState(false);
-  const [loggedIn, setLoggedIn] = useState(false);
+  const [loggedIn, setLoggedIn] = useState<boolean | null>(null);
 
   useEffect(() => {
     setLoggedIn(document.cookie.includes("star_user=true"));
@@ -48,6 +48,31 @@ export default function DashboardPage() {
     const t = setInterval(loadPins, 4000);
     return () => clearInterval(t);
   }, []);
+
+if (loggedIn === null) {
+  return null; // or a loading spinner if you want
+}
+
+if (!loggedIn) {
+  return (
+    <main className="min-h-screen flex items-center justify-center bg-[#0a0d11] text-white">
+      <div className="rounded-2xl border border-white/10 bg-[#0f141b]/80 p-10 text-center shadow-[0_30px_120px_rgba(0,0,0,0.6)]">
+        <div className="text-2xl font-bold mb-2">Access Denied</div>
+        <p className="text-white/60 mb-6">
+          You must sign in to access Star.
+        </p>
+
+        <a
+          href="/api/auth/login"
+          className="inline-block rounded-xl bg-indigo-500 px-6 py-3 font-semibold hover:opacity-90 transition"
+        >
+          → Sign in with Discord
+        </a>
+      </div>
+    </main>
+  );
+}
+
 
   const stats = useMemo(() => {
     const total = pins.length;
