@@ -5,50 +5,11 @@ export async function GET(req: Request) {
   const code = searchParams.get("code");
 
   if (!code) {
-    return NextResponse.redirect("/");
+    return NextResponse.json({ error: "No code provided" }, { status: 400 });
   }
 
-  // Exchange code for token
-  const tokenRes = await fetch("https://discord.com/api/oauth2/token", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/x-www-form-urlencoded",
-    },
-    body: new URLSearchParams({
-      client_id: process.env.DISCORD_CLIENT_ID!,
-      client_secret: process.env.DISCORD_CLIENT_SECRET!,
-      grant_type: "authorization_code",
-      code,
-      redirect_uri: process.env.DISCORD_REDIRECT_URI!,
-    }),
-  });
+  // Later you can exchange this for a token
+  // For now just confirm login worked
 
-  const token = await tokenRes.json();
-
-  // Get user info
-  const userRes = await fetch("https://discord.com/api/users/@me", {
-    headers: {
-      Authorization: `Bearer ${token.access_token}`,
-    },
-  });
-
-  const user = await userRes.json();
-
-  // Simple session cookie
-  const res = NextResponse.redirect("/dashboard");
-
-  res.cookies.set(
-    "discord_user",
-    JSON.stringify({
-      id: user.id,
-      username: user.username,
-      avatar: user.avatar,
-    }),
-    {
-      httpOnly: true,
-      path: "/",
-    }
-  );
-
-  return res;
+  return NextResponse.redirect("https://star-site-psi.vercel.app/dashboard");
 }
