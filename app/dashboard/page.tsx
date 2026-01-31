@@ -96,7 +96,7 @@ export default function DashboardPage() {
 
   {/* DISCORD LOGIN BUTTON */}
   <a
-    href="/login"
+    href="/api/auth/login"
     className="ml-2 flex items-center gap-2 rounded-xl bg-indigo-500 px-4 py-2 font-semibold text-white hover:opacity-90 transition shadow-[0_15px_60px_rgba(99,102,241,0.35)]"
   >
     → Discord login
