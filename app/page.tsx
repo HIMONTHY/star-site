@@ -6,7 +6,7 @@ export default function HomePage() {
       {/* Background effects (NOW MOVING) */}
       <div className="pointer-events-none absolute inset-0">
         {/* Moving glow blob */}
-        <div className="absolute left-1/2 top-[-240px] h-[700px] w-[900px] -translate-x-1/2 rounded-full bg-emerald-500/15 blur-[120px] animate-glow" />
+        <div className="absolute left-1/2 top-[-240px] h-[700px] w-[900px] -translate-x-1/2 rounded-full bg-blue-500/15 blur-[120px] animate-glow" />
 
         {/* Dark vignette */}
         <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,rgba(0,0,0,0)_0%,rgba(0,0,0,0.55)_55%,rgba(0,0,0,0.92)_100%)]" />
@@ -26,11 +26,11 @@ export default function HomePage() {
         <div className="mx-auto max-w-7xl px-6 py-5 flex items-center justify-between">
           <div className="flex items-center gap-3">
             <div className="h-9 w-9 rounded-xl border border-white/10 bg-white/5 grid place-items-center">
-              <span className="text-emerald-300 font-bold">S</span>
+              <span className="text-blue-300 font-bold">S</span>
             </div>
             <div className="font-semibold tracking-wide">
               <span className="text-white">Star</span>{" "}
-              <span className="text-emerald-400">Site</span>
+              <span className="text-blue-400">Site</span>
             </div>
           </div>
 
@@ -69,7 +69,7 @@ export default function HomePage() {
             </a>
             <a
               href="#get-access"
-              className="rounded-xl bg-emerald-500 px-4 py-2 text-sm font-semibold text-black hover:opacity-90"
+              className="rounded-xl bg-blue-500 px-4 py-2 text-sm font-semibold text-black hover:opacity-90"
             >
               Get Access
             </a>
@@ -83,12 +83,12 @@ export default function HomePage() {
       <section id="home" className="relative z-10">
         <div className="mx-auto max-w-6xl px-6 pt-16 pb-16 text-center">
           <div className="mx-auto mb-6 h-16 w-16 rounded-2xl border border-white/10 bg-white/5 grid place-items-center">
-            <span className="text-3xl font-black text-emerald-300">★</span>
+            <span className="text-3xl font-black text-blue-300">★</span>
           </div>
 
           <h1 className="text-5xl md:text-7xl font-black tracking-tight">
             <span className="text-white">STAR</span>{" "}
-            <span className="text-emerald-400 drop-shadow-[0_0_25px_rgba(16,185,129,0.25)]">
+            <span className="text-blue-400 drop-shadow-[0_0_25px_rgba(16,185,129,0.25)]">
               DASHBOARD
             </span>
           </h1>
@@ -107,7 +107,7 @@ export default function HomePage() {
           <div className="mt-8 flex flex-col sm:flex-row justify-center gap-3">
             <a
               href="/dashboard"
-              className="rounded-xl bg-emerald-500 px-7 py-3 font-semibold text-black hover:opacity-90"
+              className="rounded-xl bg-blue-500 px-7 py-3 font-semibold text-black hover:opacity-90"
             >
               Get Started
             </a>
@@ -115,7 +115,7 @@ export default function HomePage() {
               href="https://discord.gg/rHy3W7Za"
               target="_blank"
               rel="noreferrer"
-              className="rounded-xl border border-emerald-400/40 bg-emerald-500/10 px-7 py-3 font-semibold text-emerald-200 hover:bg-emerald-500/15"
+              className="rounded-xl border border-blue-400/40 bg-blue-500/10 px-7 py-3 font-semibold text-blue-200 hover:bg-blue-500/15"
             >
               Join Discord
             </a>
@@ -141,7 +141,7 @@ export default function HomePage() {
         <div className="mx-auto max-w-6xl px-6 pb-20">
           <div className="text-center">
             <h2 className="text-4xl md:text-5xl font-black tracking-tight">
-              Why Choose <span className="text-emerald-400">Star</span>?
+              Why Choose <span className="text-blue-400">Star</span>?
             </h2>
             <p className="mt-3 text-white/55">
               Industry-leading features that set us apart from the competition.
@@ -239,8 +239,8 @@ export default function HomePage() {
 
 function Chip({ children }: { children: React.ReactNode }) {
   return (
-    <span className="inline-flex items-center gap-2 rounded-full border border-emerald-400/25 bg-emerald-500/10 px-4 py-2 text-xs text-emerald-100">
-      <span className="h-2 w-2 rounded-full bg-emerald-400/70" />
+    <span className="inline-flex items-center gap-2 rounded-full border border-blue-400/25 bg-blue-500/10 px-4 py-2 text-xs text-blue-100">
+      <span className="h-2 w-2 rounded-full bg-blue-400/70" />
       {children}
     </span>
   );
@@ -249,7 +249,7 @@ function Chip({ children }: { children: React.ReactNode }) {
 function Stat({ value, label }: { value: string; label: string }) {
   return (
     <div className="rounded-2xl border border-white/10 bg-white/5 p-6">
-      <div className="text-3xl font-black text-emerald-300">{value}</div>
+      <div className="text-3xl font-black text-blue-300">{value}</div>
       <div className="mt-1 text-xs tracking-widest text-white/45">{label}</div>
     </div>
   );
@@ -275,8 +275,8 @@ function WhyCard({
   desc: string;
 }) {
   return (
-    <div className="rounded-2xl border border-white/10 bg-black/30 p-6 shadow-[0_30px_120px_rgba(16,185,129,0.06)] hover:border-emerald-400/25 transition">
-      <div className="h-12 w-12 rounded-xl border border-emerald-400/20 bg-emerald-500/10 grid place-items-center text-emerald-300">
+    <div className="rounded-2xl border border-white/10 bg-black/30 p-6 shadow-[0_30px_120px_rgba(16,185,129,0.06)] hover:border-blue-400/25 transition">
+      <div className="h-12 w-12 rounded-xl border border-blue-400/20 bg-blue-500/10 grid place-items-center text-blue-300">
         {icon === "shield" && <ShieldIcon />}
         {icon === "eye" && <EyeIcon />}
         {icon === "bolt" && <BoltIcon />}
@@ -393,7 +393,7 @@ function Particles() {
       {dots.map((i) => (
         <span
           key={i}
-          className="absolute rounded-full bg-emerald-200/30 blur-[0.3px] animate-float"
+          className="absolute rounded-full bg-blue-200/30 blur-[0.3px] animate-float"
           style={{
             width: `${2 + (i % 3)}px`,
             height: `${2 + (i % 3)}px`,
