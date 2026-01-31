@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 
 const CLIENT_ID = "1467024882171908307";
-const CLIENT_SECRET = "YOUR_CLIENT_SECRET"; // from Discord Dev Portal
+const CLIENT_SECRET = "T4eTyKR_MN-6VaH8Q2RiGuilp1EmBfVU"; // from Discord Dev Portal
 const REDIRECT_URI = "https://star-site-psi.vercel.app/api/auth/callback";
 
 export async function GET(req: Request) {
