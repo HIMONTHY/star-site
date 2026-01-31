@@ -17,8 +17,11 @@ export default function DashboardPage() {
   const [loggedIn, setLoggedIn] = useState(false);
 
   useEffect(() => {
+  if (typeof document !== "undefined") {
     setLoggedIn(document.cookie.includes("star_user=true"));
-  }, []);
+  }
+}, []);
+
 
 if (!loggedIn) {
   return (
