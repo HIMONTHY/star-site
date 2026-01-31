@@ -1,10 +1,8 @@
 import { NextResponse } from "next/server";
 
-/* 👑 PUT VERIFIED DISCORD USER IDS HERE */
-const VERIFIED_USERS = [
-  "123456789012345678", // YOUR Discord ID
-  // "987654321098765432", // add more later
-];
+const CLIENT_ID = "1467024882171908307";
+const CLIENT_SECRET = "YOUR_CLIENT_SECRET"; // from Discord Dev Portal
+const REDIRECT_URI = "https://star-site-psi.vercel.app/api/auth/callback";
 
 export async function GET(req: Request) {
   const { searchParams } = new URL(req.url);
@@ -14,18 +12,46 @@ export async function GET(req: Request) {
     return NextResponse.json({ error: "No code provided" }, { status: 400 });
   }
 
-  // ⚠️ TEMP MANUAL USER ID (REPLACE LATER WITH REAL API)
-  const discordUserId = "000000000000000000"; // put your ID for now
+  // 🔁 Exchange code for access token
+  const tokenRes = await fetch("https://discord.com/api/oauth2/token", {
+    method: "POST",
+    headers: { "Content-Type": "application/x-www-form-urlencoded" },
+    body: new URLSearchParams({
+      client_id: CLIENT_ID,
+      client_secret: CLIENT_SECRET,
+      grant_type: "authorization_code",
+      code,
+      redirect_uri: REDIRECT_URI,
+    }),
+  });
+
+  const tokenData = await tokenRes.json();
+
+  const accessToken = tokenData.access_token;
+
+  // 👤 Fetch Discord user info
+  const userRes = await fetch("https://discord.com/api/users/@me", {
+    headers: {
+      Authorization: `Bearer ${accessToken}`,
+    },
+  });
+
+  const user = await userRes.json();
+
+  /*
+    user.verified === true means email verified
+    user.id is Discord ID
+  */
 
   const res = NextResponse.redirect(
     "https://star-site-psi.vercel.app/dashboard"
   );
 
-  // Mark logged in
+  // Logged in
   res.cookies.set("star_user", "true", { path: "/" });
 
-  // Manual verification check
-  if (VERIFIED_USERS.includes(discordUserId)) {
+  // REAL verification check
+  if (user.verified === true) {
     res.cookies.set("discord_verified", "true", { path: "/" });
   } else {
     res.cookies.set("discord_verified", "false", { path: "/" });
