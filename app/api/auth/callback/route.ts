@@ -52,7 +52,7 @@ export async function GET(req: Request) {
 
     if (!hwid) {
       return NextResponse.redirect(
-        "https://star-site-psi.vercel.app/bind-device"
+        "https://star-site-psi.vercel.app/dashboard"
       );
     }
 
