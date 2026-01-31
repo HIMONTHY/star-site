@@ -16,14 +16,23 @@ export default function DashboardPage() {
   const [copied, setCopied] = useState(false);
 
   async function loadPins() {
-    const res = await fetch("/api/pins", { cache: "no-store" });
-    const data = await res.json();
-    const list = data.pins || [];
-    setPins(list);
-    setLatest(list[0] || null);
+    try {
+      const res = await fetch("/api/pins", { cache: "no-store" });
+      if (!res.ok) throw new Error("Failed");
+
+      const data = await res.json();
+      const list = data.pins || [];
+
+      setPins(list);
+      setLatest(list[0] || null);
+    } catch (err) {
+      console.error(err);
+    }
   }
 
   async function generatePin() {
+    if (loading) return;
+
     setLoading(true);
     await fetch("/api/pins", { method: "POST" });
     setLoading(false);
@@ -54,10 +63,25 @@ export default function DashboardPage() {
   return (
     <main className="min-h-screen text-white relative overflow-hidden bg-[#0a0d11]">
 
+      {/* ===== BACKGROUND ===== */}
+      <div className="pointer-events-none absolute inset-0">
+        <div className="glow-blob" />
+        <div className="absolute -bottom-40 left-1/2 h-[520px] w-[900px] -translate-x-1/2 rounded-full bg-emerald-500/10 blur-[160px]" />
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,rgba(0,0,0,0)_0%,rgba(0,0,0,0.6)_55%,rgba(0,0,0,0.95)_100%)]" />
+        <div
+          className="grid-move absolute inset-0 opacity-[0.13]
+          [background-image:linear-gradient(to_right,rgba(255,255,255,0.08)_1px,transparent_1px),
+          linear-gradient(to_bottom,rgba(255,255,255,0.08)_1px,transparent_1px)]
+          [background-size:70px_70px]"
+        />
+        <Particles />
+      </div>
+
       {/* ===== STICKY TOP NAV ===== */}
       <div className="relative z-10 sticky top-0 border-b border-white/10 bg-black/55 backdrop-blur">
         <div className="mx-auto max-w-7xl px-6 py-4 flex items-center justify-between">
 
+          {/* LOGO */}
           <div className="flex items-center gap-3">
             <div className="h-9 w-9 rounded-xl border border-white/10 bg-white/5 grid place-items-center">
               <span className="text-emerald-300 font-bold">S</span>
@@ -67,7 +91,7 @@ export default function DashboardPage() {
             </div>
           </div>
 
-          {/* 🔥 TOP RIGHT WITH DISCORD LOGIN */}
+          {/* NAV LINKS + DISCORD LOGIN */}
           <div className="flex items-center gap-2 text-sm">
 
             <a
@@ -84,22 +108,24 @@ export default function DashboardPage() {
               Dashboard
             </a>
 
+            {/* DISCORD LOGIN BUTTON */}
             <a
               href="/login"
               className="ml-2 flex items-center gap-2 rounded-xl bg-indigo-500 px-4 py-2 font-semibold text-white hover:opacity-90 transition shadow-[0_15px_60px_rgba(99,102,241,0.35)]"
             >
-              Login with Discord
+              → Discord login
             </a>
 
           </div>
         </div>
       </div>
 
-      {/* ===== REST OF YOUR DASHBOARD (UNCHANGED) ===== */}
-
+      {/* ===== LAYOUT ===== */}
       <div className="relative z-10 mx-auto max-w-7xl px-6 py-8 grid gap-6 md:grid-cols-[240px_1fr]">
 
+        {/* SIDEBAR */}
         <aside className="rounded-2xl border border-white/10 bg-[#0f141b]/75 backdrop-blur p-4 h-fit shadow-[0_30px_120px_rgba(0,0,0,0.45)]">
+
           <div className="text-xs tracking-widest text-white/40 px-3 pb-3">
             MENU
           </div>
@@ -118,20 +144,64 @@ export default function DashboardPage() {
               Discord Support
             </a>
           </div>
+
         </aside>
 
+        {/* MAIN */}
         <section>
-          <h1 className="text-3xl font-bold">My Pins</h1>
 
-          <button
-            onClick={generatePin}
-            disabled={loading}
-            className="mt-4 rounded-xl bg-emerald-500 px-5 py-2 font-semibold text-black hover:opacity-90 disabled:opacity-50"
-          >
-            {loading ? "Creating..." : "+ Create Pin"}
-          </button>
+          {/* HEADER */}
+          <div className="flex items-center justify-between flex-wrap gap-4">
+            <div>
+              <h1 className="text-3xl font-bold">My Pins</h1>
+              <p className="mt-1 text-white/60">
+                Generate pins, track status, and view results.
+              </p>
+            </div>
+
+            <button
+              onClick={generatePin}
+              disabled={loading}
+              className="rounded-xl bg-emerald-500 px-5 py-2 font-semibold text-black hover:opacity-90 disabled:opacity-50 transition shadow-[0_20px_70px_rgba(16,185,129,0.12)]"
+            >
+              {loading ? "Creating..." : "+ Create Pin"}
+            </button>
+          </div>
+
+          {/* LATEST PIN */}
+          {latest && (
+            <div className="mt-6 rounded-2xl border border-emerald-500/30 bg-emerald-500/10 p-5 backdrop-blur">
+
+              <div className="text-sm text-white/80 mb-2">
+                Latest PIN:
+              </div>
+
+              <div className="flex items-center gap-4 flex-wrap">
+
+                <div className="text-2xl font-mono tracking-widest text-emerald-300">
+                  {latest.pin}
+                </div>
+
+                <button
+                  onClick={() => copy(latest.pin)}
+                  className="rounded-lg bg-black/40 px-4 py-2 text-sm hover:bg-black/60 border border-white/10 transition"
+                >
+                  {copied ? "Copied ✅" : "Copy"}
+                </button>
+
+              </div>
+
+            </div>
+          )}
+
+          {/* STATS */}
+          <div className="mt-6 grid gap-4 sm:grid-cols-3">
+            <StatPremium label="Total Pins" value={stats.total} />
+            <StatPremium label="Pending" value={stats.pending} />
+            <StatPremium label="Finished" value={stats.finished} />
+          </div>
+
         </section>
-
       </div>
     </main>
   );
@@ -139,34 +209,57 @@ export default function DashboardPage() {
 
 /* ===== COMPONENTS ===== */
 
-function SidebarItem({
-  label,
-  icon,
-  active,
-}: {
-  label: string;
-  icon?: React.ReactNode;
-  active?: boolean;
-}) {
+function SidebarItem({ label, icon, active }: any) {
   return (
     <div
-      className={[
-        "mb-2 rounded-xl px-4 py-3 font-semibold cursor-pointer border transition flex items-center gap-3",
+      className={`mb-2 rounded-xl px-4 py-3 font-semibold cursor-pointer border flex items-center gap-3 transition ${
         active
           ? "bg-emerald-500/15 border-emerald-500/30 text-emerald-200"
-          : "bg-transparent border-white/10 text-white/70 hover:bg-white/5 hover:text-white",
-      ].join(" ")}
+          : "border-white/10 text-white/70 hover:bg-white/5"
+      }`}
     >
-      <span className="text-emerald-300">{icon}</span>
+      {icon}
       {label}
     </div>
   );
 }
 
+function StatPremium({ label, value }: any) {
+  return (
+    <div className="rounded-2xl border border-white/10 bg-[#0f141b]/75 p-5">
+      <div className="text-sm text-white/60">{label}</div>
+      <div className="mt-1 text-2xl font-bold text-emerald-200">{value}</div>
+    </div>
+  );
+}
+
+/* ===== PARTICLES ===== */
+function Particles() {
+  return (
+    <div className="absolute inset-0">
+      {[...Array(40)].map((_, i) => (
+        <span
+          key={i}
+          className="absolute w-[3px] h-[3px] rounded-full bg-emerald-300/30 animate-float"
+          style={{
+            left: `${Math.random() * 100}%`,
+            top: `${Math.random() * 100}%`,
+          }}
+        />
+      ))}
+    </div>
+  );
+}
+
+/* ===== ICONS ===== */
 function GridIcon() {
   return (
     <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
-      <path d="M4 4h7v7H4V4zm9 0h7v7h-7V4zM4 13h7v7H4v-7zm9 0h7v7h-7v-7z" stroke="currentColor" strokeWidth="2" />
+      <path
+        d="M4 4h7v7H4zM13 4h7v7h-7zM4 13h7v7H4zM13 13h7v7h-7z"
+        stroke="currentColor"
+        strokeWidth="2"
+      />
     </svg>
   );
 }
@@ -174,8 +267,11 @@ function GridIcon() {
 function PinIcon() {
   return (
     <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
-      <path d="M12 22s7-5 7-12a7 7 0 10-14 0c0 7 7 12 7 12z" stroke="currentColor" strokeWidth="2" />
-      <circle cx="12" cy="10" r="2" stroke="currentColor" strokeWidth="2" />
+      <path
+        d="M12 22s7-5 7-12a7 7 0 10-14 0c0 7 7 12 7 12z"
+        stroke="currentColor"
+        strokeWidth="2"
+      />
     </svg>
   );
 }
@@ -183,7 +279,11 @@ function PinIcon() {
 function SupportIcon() {
   return (
     <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
-      <path d="M4 12a8 8 0 0116 0v7a2 2 0 01-2 2h-2" stroke="currentColor" strokeWidth="2" />
+      <path
+        d="M4 12a8 8 0 0116 0v7a2 2 0 01-2 2h-2"
+        stroke="currentColor"
+        strokeWidth="2"
+      />
     </svg>
   );
 }
