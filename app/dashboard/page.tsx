@@ -20,7 +20,7 @@ export default function DashboardPage() {
     setLoggedIn(document.cookie.includes("star_user=true"));
   }, []);
 
-if (!loggedIn || !verified) {
+if (!loggedIn) {
   return (
     <main className="min-h-screen flex items-center justify-center bg-[#0a0d11] text-white">
       <div className="text-center rounded-2xl border border-white/10 bg-[#0f141b]/80 backdrop-blur p-10 shadow-[0_30px_120px_rgba(0,0,0,0.6)] max-w-md">
