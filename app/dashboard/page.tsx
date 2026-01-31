@@ -14,11 +14,14 @@ export default function DashboardPage() {
   const [loading, setLoading] = useState(false);
   const [latest, setLatest] = useState<PinRow | null>(null);
   const [copied, setCopied] = useState(false);
-  const [loggedIn, setLoggedIn] = useState<boolean | null>(null);
+  const [loggedIn, setLoggedIn] = useState(false);
+const [ready, setReady] = useState(false);
 
   useEffect(() => {
-    setLoggedIn(document.cookie.includes("star_user=true"));
-  }, []);
+  const hasLogin = document.cookie.includes("star_user=true");
+  setLoggedIn(hasLogin);
+  setReady(true);
+}, []);
 
   async function loadPins() {
     const res = await fetch("/api/pins", { cache: "no-store" });
@@ -49,25 +52,40 @@ export default function DashboardPage() {
     return () => clearInterval(t);
   }, []);
 
-if (loggedIn === null) {
-  return null; // or a loading spinner if you want
+if (!ready) {
+  return null; // wait for client hydration
 }
 
 if (!loggedIn) {
   return (
     <main className="min-h-screen flex items-center justify-center bg-[#0a0d11] text-white">
-      <div className="rounded-2xl border border-white/10 bg-[#0f141b]/80 p-10 text-center shadow-[0_30px_120px_rgba(0,0,0,0.6)]">
-        <div className="text-2xl font-bold mb-2">Access Denied</div>
+      <div className="text-center rounded-2xl border border-white/10 bg-[#0f141b]/80 backdrop-blur p-10 shadow-[0_30px_120px_rgba(0,0,0,0.6)] max-w-md">
+
+        <div className="mx-auto mb-4 h-14 w-14 rounded-full bg-emerald-500/10 grid place-items-center text-emerald-400 text-2xl">
+          🛡️
+        </div>
+
+        <h1 className="text-2xl font-bold mb-2">Access denied</h1>
+
         <p className="text-white/60 mb-6">
-          You must sign in to access Star.
+          You must be signed in with Discord to access the dashboard.
         </p>
 
-        <a
-          href="/api/auth/login"
-          className="inline-block rounded-xl bg-indigo-500 px-6 py-3 font-semibold hover:opacity-90 transition"
-        >
-          → Sign in with Discord
-        </a>
+        <div className="flex gap-3 justify-center">
+          <a
+            href="/"
+            className="rounded-xl bg-black/40 px-5 py-2 border border-white/10 hover:bg-black/60 transition"
+          >
+            Home
+          </a>
+
+          <a
+            href="/api/auth/login"
+            className="rounded-xl bg-indigo-500 px-5 py-2 font-semibold hover:opacity-90 transition"
+          >
+            Sign in
+          </a>
+        </div>
       </div>
     </main>
   );
