@@ -45,29 +45,35 @@ export async function GET(req: Request) {
   // 🔒 HARD WHITELIST (ONLY HERE DO WE SET COOKIES)
   if (ALLOWED_USERS.includes(user.id)) {
 
-    /* 🔐 HWID LAYER */
+    /* 🔐 HWID LAYER (ADDED - NOTHING ELSE CHANGED) */
 
     const hwid =
       req.headers.get("x-hwid") || searchParams.get("hwid");
 
-    // simple memory store
-    const globalAny = globalThis as any;
-    globalAny.hwidStore = globalAny.hwidStore || {};
-    const hwidStore = globalAny.hwidStore as Record<string, string>;
-
-    // If first time → bind HWID
-    if (hwid && !hwidStore[user.id]) {
-      hwidStore[user.id] = hwid;
-    }
-
-    // If HWID exists and doesn't match → block
-    if (hwidStore[user.id] && hwid && hwidStore[user.id] !== hwid) {
+    if (!hwid) {
       return NextResponse.redirect(
         "https://star-site-psi.vercel.app/access-denied"
       );
     }
 
-    /* ✅ ORIGINAL CODE CONTINUES */
+    // simple in-memory HWID store (upgrade to DB later)
+    const globalAny = globalThis as any;
+    globalAny.hwidStore = globalAny.hwidStore || {};
+    const hwidStore = globalAny.hwidStore as Record<string, string>;
+
+    // First-time bind
+    if (!hwidStore[user.id]) {
+      hwidStore[user.id] = hwid;
+    }
+
+    // Block if HWID does not match
+    if (hwidStore[user.id] !== hwid) {
+      return NextResponse.redirect(
+        "https://star-site-psi.vercel.app/access-denied"
+      );
+    }
+
+    /* ✅ YOUR ORIGINAL CODE CONTINUES */
 
     const res = NextResponse.redirect(
       "https://star-site-psi.vercel.app/dashboard"
