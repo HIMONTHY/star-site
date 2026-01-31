@@ -17,58 +17,8 @@ export default function DashboardPage() {
   const [loggedIn, setLoggedIn] = useState(false);
 
   useEffect(() => {
-  if (typeof document !== "undefined") {
     setLoggedIn(document.cookie.includes("star_user=true"));
-  }
-}, []);
-
-
-if (!loggedIn) {
-  return (
-    <main className="min-h-screen flex items-center justify-center bg-[#0a0d11] text-white">
-      <div className="text-center rounded-2xl border border-white/10 bg-[#0f141b]/80 backdrop-blur p-10 shadow-[0_30px_120px_rgba(0,0,0,0.6)] max-w-md">
-
-        <div className="mx-auto mb-4 h-14 w-14 rounded-full bg-emerald-500/10 grid place-items-center text-emerald-400 text-2xl">
-          🛡️
-        </div>
-
-        <h1 className="text-2xl font-bold mb-2">Access denied</h1>
-
-        <p className="text-white/60 mb-6">
-          {!loggedIn
-            ? "You must sign in with Discord to continue."
-            : "Your Discord account must be verified to access this dashboard."}
-        </p>
-
-        <div className="flex gap-3 justify-center">
-          <a
-            href="/"
-            className="rounded-xl bg-black/40 px-5 py-2 border border-white/10 hover:bg-black/60 transition"
-          >
-            Home
-          </a>
-
-          {!loggedIn ? (
-            <a
-              href="/api/auth/login"
-              className="rounded-xl bg-indigo-500 px-5 py-2 font-semibold hover:opacity-90 transition"
-            >
-              Sign in
-            </a>
-          ) : (
-            <a
-              href="/api/auth/logout"
-              className="rounded-xl bg-emerald-500 px-5 py-2 font-semibold hover:opacity-90 transition"
-            >
-              Sign out
-            </a>
-          )}
-        </div>
-
-      </div>
-    </main>
-  );
-}
+  }, []);
 
   async function loadPins() {
     const res = await fetch("/api/pins", { cache: "no-store" });
