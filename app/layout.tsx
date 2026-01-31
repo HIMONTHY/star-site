@@ -1,16 +1,17 @@
 import "./globals.css";
 
 export const metadata = {
-  title: "Star Bypass",
-  description: "Private Discord-verified Star Bypass dashboard",
+  title: "Star Site",
+  description: "Secure Discord-verified dashboard powered by Star",
 
   openGraph: {
-    title: "Star Bypass",
-    description: "Private Discord-verified Star Bypass dashboard",
-    siteName: "Star Bypass",
+    title: "Star Site",
+    description: "Secure Discord-verified dashboard powered by Star",
+    url: "https://star-site-psi.vercel.app",
+    siteName: "Star Site",
     images: [
       {
-        url: "/og.png",   // same image on both sites
+        url: "https://discord.com/channels/@me/1117716359267225611/1467083237716131852",
         width: 1200,
         height: 630,
       },
