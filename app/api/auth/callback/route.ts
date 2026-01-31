@@ -15,7 +15,7 @@ export async function GET(req: Request) {
   }
 
   // ⚠️ TEMP MANUAL USER ID (REPLACE LATER WITH REAL API)
-  const discordUserId = "123456789012345678"; // put your ID for now
+  const discordUserId = "000000000000000000"; // put your ID for now
 
   const res = NextResponse.redirect(
     "https://star-site-psi.vercel.app/dashboard"
