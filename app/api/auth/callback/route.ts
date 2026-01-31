@@ -49,12 +49,29 @@ export async function GET(req: Request) {
   // logged in cookie
   res.cookies.set("star_user", "true", { path: "/" });
 
-  // 🔒 HARD CHECK BY DISCORD ID
-  if (ALLOWED_USERS.includes(user.id)) {
-    res.cookies.set("discord_verified", "true", { path: "/" });
-  } else {
-    res.cookies.set("discord_verified", "false", { path: "/" });
-  }
+  // 🔒 HARD WHITELIST CHECK
+if (ALLOWED_USERS.includes(user.id)) {
+
+  const res = NextResponse.redirect(
+    "https://star-site-psi.vercel.app/dashboard"
+  );
+
+  // ONLY approved users get logged in
+  res.cookies.set("star_user", "true", { path: "/" });
+  res.cookies.set("discord_verified", "true", { path: "/" });
+
+  return res;
+
+} else {
+
+  // 🚫 NOT ALLOWED → NO LOGIN COOKIE AT ALL
+  const res = NextResponse.redirect(
+    "https://star-site-psi.vercel.app/access-denied"
+  );
+
+  res.cookies.set("star_user", "false", { path: "/" });
+  res.cookies.set("discord_verified", "false", { path: "/" });
 
   return res;
 }
+
