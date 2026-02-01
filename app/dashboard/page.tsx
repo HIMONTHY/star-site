@@ -51,39 +51,11 @@ export default function DashboardPage() {
     } catch {}
   }
 
-  // Load once when dashboard opens
-useEffect(() => {
-  loadPins();
-}, []);
-
-
-// Live update while scans are running
-useEffect(() => {
-  const pendingPins = pins.filter(p => !p.hasResults);
-
-  if (pendingPins.length === 0) return;
-
-  const interval = setInterval(async () => {
-    const res = await fetch("/api/pins", { cache: "no-store" });
-    const data = await res.json();
-    const list = data.pins || [];
-
-    setPins(list);
-    setLatest(list[0] || null);
-  }, 2000); // every 2 seconds while pending
-
-  return () => clearInterval(interval);
-}, [pins]);
-
-
-// Full dashboard refresh every 1 minute
-useEffect(() => {
-  const resetInterval = setInterval(() => {
-    window.location.reload();
-  }, 60000);
-
-  return () => clearInterval(resetInterval);
-}, []);
+  useEffect(() => {
+    loadPins();
+    const t = setInterval(loadPins, 60000);
+    return () => clearInterval(t);
+  }, []);
 
   const stats = useMemo(() => {
     const total = pins.length;
