@@ -19,14 +19,14 @@ export default function DashboardPage() {
   const [loggedIn, setLoggedIn] = useState(false);
 
   useEffect(() => {
-  const hasLogin = document.cookie.includes("star_user=true");
+    const hasLogin = document.cookie.includes("star_user=true");
 
-  if (!hasLogin) {
-    router.push("/access-denied");
-  } else {
-    setLoggedIn(true);
-  }
-}, [router]);
+    if (!hasLogin) {
+      router.push("/access-denied");
+    } else {
+      setLoggedIn(true);
+    }
+  }, [router]);
 
   async function loadPins() {
     const res = await fetch("/api/pins", { cache: "no-store" });
@@ -53,6 +53,7 @@ export default function DashboardPage() {
 
   useEffect(() => {
     loadPins();
+    // Updated: Changed 4000 (4s) to 60000 (1 min)
     const t = setInterval(loadPins, 60000);
     return () => clearInterval(t);
   }, []);
@@ -93,39 +94,32 @@ export default function DashboardPage() {
           </div>
 
           <div className="flex items-center gap-2 text-sm">
-  <a href="/" className="rounded-xl px-3 py-2 ...">Home</a>
+            <a href="/" className="rounded-xl px-3 py-2">Home</a>
+            <a href="/dashboard" className="rounded-xl px-3 py-2">Dashboard</a>
 
-  <a href="/dashboard" className="rounded-xl px-3 py-2 ...">
-    Dashboard
-  </a>
-
-  {loggedIn ? (
-    <a
-      href="/api/auth/logout"
-      className="ml-2 flex items-center gap-2 rounded-xl bg-zinc-800 px-4 py-2 font-semibold text-white hover:bg-zinc-700 transition border border-white/10"
-    >
-      ↩ Sign out
-    </a>
-  ) : (
-    <a
-      href="/api/auth/login"
-      className="ml-2 flex items-center gap-2 rounded-xl bg-indigo-500 px-4 py-2 font-semibold text-white hover:opacity-90 transition shadow-[0_15px_60px_rgba(99,102,241,0.35)]"
-    >
-      → Discord login
-    </a>
-  )}
-</div>
-
+            {loggedIn ? (
+              <a
+                href="/api/auth/logout"
+                className="ml-2 flex items-center gap-2 rounded-xl bg-zinc-800 px-4 py-2 font-semibold text-white hover:bg-zinc-700 transition border border-white/10"
+              >
+                ↩ Sign out
+              </a>
+            ) : (
+              <a
+                href="/api/auth/login"
+                className="ml-2 flex items-center gap-2 rounded-xl bg-indigo-500 px-4 py-2 font-semibold text-white hover:opacity-90 transition shadow-[0_15px_60px_rgba(99,102,241,0.35)]"
+              >
+                → Discord login
+              </a>
+            )}
+          </div>
         </div>
       </div>
 
       {/* ===== LAYOUT ===== */}
       <div className="relative z-10 mx-auto max-w-7xl px-6 py-8 grid gap-6 md:grid-cols-[240px_1fr]">
-        {/* SIDEBAR */}
         <aside className="rounded-2xl border border-white/10 bg-[#0f141b]/75 backdrop-blur p-4 h-fit shadow-[0_30px_120px_rgba(0,0,0,0.45)]">
-          <div className="text-xs tracking-widest text-white/40 px-3 pb-3">
-            MENU
-          </div>
+          <div className="text-xs tracking-widest text-white/40 px-3 pb-3">MENU</div>
           <SidebarItem label="Dashboard" icon={<GridIcon />} active />
           <SidebarItem label="My Pins" icon={<PinIcon />} />
           <SidebarItem label="Simulate Trinity" icon={<PinIcon />} />
@@ -142,15 +136,11 @@ export default function DashboardPage() {
           </div>
         </aside>
 
-        {/* MAIN */}
         <section>
-          {/* HEADER */}
           <div className="flex items-center justify-between flex-wrap gap-4">
             <div>
               <h1 className="text-3xl font-bold">My Pins</h1>
-              <p className="mt-1 text-white/60">
-                Generate pins, track status, and view results.
-              </p>
+              <p className="mt-1 text-white/60">Generate pins, track status, and view results.</p>
             </div>
 
             <button
@@ -162,51 +152,32 @@ export default function DashboardPage() {
             </button>
           </div>
 
-          {/* LATEST PIN */}
           {latest && (
             <div className="mt-6 rounded-2xl border border-blue-500/30 bg-blue-500/10 p-5 backdrop-blur shadow-[0_30px_120px_rgba(16,185,129,0.06)]">
-              <div className="text-sm text-white/80 mb-2">
-                Latest PIN — share this with the person being checked:
-              </div>
-
+              <div className="text-sm text-white/80 mb-2">Latest PIN — share this with the person being checked:</div>
               <div className="flex items-center gap-4 flex-wrap">
-                <div className="text-2xl font-mono tracking-widest text-blue-300">
-                  {latest.pin}
-                </div>
-
+                <div className="text-2xl font-mono tracking-widest text-blue-300">{latest.pin}</div>
                 <button
                   onClick={() => copy(latest.pin)}
                   className="rounded-lg bg-black/40 px-4 py-2 text-sm hover:bg-black/60 border border-white/10 transition"
                 >
                   {copied ? "Copied ✅" : "Copy"}
                 </button>
-
-                <span className="text-xs text-white/50">
-                  Created {new Date(latest.createdAt).toLocaleString()}
-                </span>
-              </div>
-
-              <div className="mt-2 text-xs text-white/60">
-                They enter this in Star Mac, run the scan, then results show up
-                here.
+                <span className="text-xs text-white/50">Created {new Date(latest.createdAt).toLocaleString()}</span>
               </div>
             </div>
           )}
 
-          {/* STATS */}
           <div className="mt-6 grid gap-4 sm:grid-cols-3">
             <StatPremium label="Total Pins" value={stats.total} />
             <StatPremium label="Pending" value={stats.pending} />
             <StatPremium label="Finished" value={stats.finished} />
           </div>
 
-          {/* TABLE */}
           <div className="mt-8 rounded-2xl border border-white/10 bg-[#0f141b]/75 backdrop-blur p-6 shadow-[0_30px_120px_rgba(0,0,0,0.45)]">
             <div className="flex items-center justify-between mb-4 flex-wrap gap-3">
-              <div className="text-sm text-white/70">
-                Recent pins (auto-refresh every 4s)
-              </div>
-
+              {/* Updated: Changed text to reflect 1 min refresh rate */}
+              <div className="text-sm text-white/70">Recent pins (auto-refresh every 1 min)</div>
               <button
                 onClick={loadPins}
                 className="rounded-lg bg-black/40 px-4 py-2 text-sm hover:bg-black/60 border border-white/10 transition"
@@ -224,31 +195,23 @@ export default function DashboardPage() {
 
             <div className="divide-y divide-white/10">
               {pins.length === 0 ? (
-                <div className="py-10 text-center text-white/60">
-                  No pins yet.
-                </div>
+                <div className="py-10 text-center text-white/60">No pins yet.</div>
               ) : (
                 pins.map((p) => (
                   <div
                     key={p.id}
                     className="grid grid-cols-4 py-4 text-sm items-center hover:bg-white/5 transition rounded-xl"
                   >
-                    <div className="font-mono tracking-widest text-blue-300">
-                      {p.pin}
-                    </div>
-
+                    <div className="font-mono tracking-widest text-blue-300">{p.pin}</div>
                     <div>
+                      {/* Logic: if hasResults is true, it shows Finished, otherwise Pending */}
                       {p.hasResults ? (
                         <Badge tone="good">Finished</Badge>
                       ) : (
                         <Badge tone="neutral">Pending</Badge>
                       )}
                     </div>
-
-                    <div className="text-white/55">
-                      {new Date(p.createdAt).toLocaleTimeString()}
-                    </div>
-
+                    <div className="text-white/55">{new Date(p.createdAt).toLocaleTimeString()}</div>
                     <div className="flex justify-end">
                       <button
                         onClick={() => copy(p.pin)}
@@ -270,15 +233,7 @@ export default function DashboardPage() {
 
 /* ===== UI COMPONENTS ===== */
 
-function SidebarItem({
-  label,
-  icon,
-  active,
-}: {
-  label: string;
-  icon?: React.ReactNode;
-  active?: boolean;
-}) {
+function SidebarItem({ label, icon, active }: { label: string; icon?: React.ReactNode; active?: boolean }) {
   return (
     <div
       className={[
@@ -306,13 +261,7 @@ function StatPremium({ label, value }: { label: string; value: number }) {
   );
 }
 
-function Badge({
-  tone,
-  children,
-}: {
-  tone: "good" | "neutral";
-  children: React.ReactNode;
-}) {
+function Badge({ tone, children }: { tone: "good" | "neutral"; children: React.ReactNode }) {
   const cls =
     tone === "good"
       ? "border-blue-500/30 bg-blue-500/10 text-blue-200"
@@ -330,7 +279,6 @@ function Badge({
   );
 }
 
-/* ===== BACKGROUND PARTICLES ===== */
 function Particles() {
   const dots = Array.from({ length: 44 }, (_, i) => i);
   return (
@@ -353,26 +301,17 @@ function Particles() {
   );
 }
 
-/* ===== ICONS (NO PACKAGES) ===== */
 function GridIcon() {
   return (
     <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
-      <path
-        d="M4 4h7v7H4V4zm9 0h7v7h-7V4zM4 13h7v7H4v-7zm9 0h7v7h-7v-7z"
-        stroke="currentColor"
-        strokeWidth="2"
-      />
+      <path d="M4 4h7v7H4V4zm9 0h7v7h-7V4zM4 13h7v7H4v-7zm9 0h7v7h-7v-7z" stroke="currentColor" strokeWidth="2" />
     </svg>
   );
 }
 function PinIcon() {
   return (
     <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
-      <path
-        d="M12 22s7-5 7-12a7 7 0 10-14 0c0 7 7 12 7 12z"
-        stroke="currentColor"
-        strokeWidth="2"
-      />
+      <path d="M12 22s7-5 7-12a7 7 0 10-14 0c0 7 7 12 7 12z" stroke="currentColor" strokeWidth="2" />
       <circle cx="12" cy="10" r="2" stroke="currentColor" strokeWidth="2" />
     </svg>
   );
@@ -380,22 +319,9 @@ function PinIcon() {
 function SupportIcon() {
   return (
     <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
-      <path
-        d="M4 12a8 8 0 0116 0v7a2 2 0 01-2 2h-2"
-        stroke="currentColor"
-        strokeWidth="2"
-        strokeLinecap="round"
-      />
-      <path
-        d="M4 12v5a2 2 0 002 2h2v-7H6a2 2 0 00-2 2z"
-        stroke="currentColor"
-        strokeWidth="2"
-      />
-      <path
-        d="M20 12v5a2 2 0 01-2 2h-2v-7h2a2 2 0 012 2z"
-        stroke="currentColor"
-        strokeWidth="2"
-      />
+      <path d="M4 12a8 8 0 0116 0v7a2 2 0 01-2 2h-2" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
+      <path d="M4 12v5a2 2 0 002 2h2v-7H6a2 2 0 00-2 2z" stroke="currentColor" strokeWidth="2" />
+      <path d="M20 12v5a2 2 0 01-2 2h-2v-7h2a2 2 0 012 2z" stroke="currentColor" strokeWidth="2" />
     </svg>
   );
 }
