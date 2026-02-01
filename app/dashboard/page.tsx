@@ -1,378 +1,113 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 
-type PinRow = {
+// Mock data structure for the result
+type ScanResult = {
   id: string;
   pin: string;
-  createdAt: string;
-  hasResults: boolean;
+  status: string;
+  scanTime: string;
+  score: number;
+  threats: { name: string; status: "clean" | "flagged"; info: string }[];
+  systemLogs: string[];
 };
 
-export default function DashboardPage() {
+export default function ResultsPage({ params }: { params: { id: string } }) {
   const router = useRouter();
-  const [pins, setPins] = useState<PinRow[]>([]);
-  const [loading, setLoading] = useState(false);
-  const [latest, setLatest] = useState<PinRow | null>(null);
-  const [copied, setCopied] = useState(false);
-  const [loggedIn, setLoggedIn] = useState(false);
-
-  // Simulation State
-  const [isSimulating, setIsSimulating] = useState(false);
-  const [simStep, setSimStep] = useState(0);
-
-  const simLines = [
-    "> Initializing Trinity Protocol...",
-    "> Bypassing neural buffers...",
-    "> Injecting Star Mac sequence...",
-    "> Synchronizing global state...",
-    "> Simulation Complete. Trinity Active."
-  ];
-
-  // Authentication Check
-  useEffect(() => {
-    const hasLogin = document.cookie.includes("star_user=true");
-    if (!hasLogin) {
-      router.push("/access-denied");
-    } else {
-      setLoggedIn(true);
-    }
-  }, [router]);
-
-  // Data Fetching
-  async function loadPins() {
-    try {
-      const res = await fetch("/api/pins", { cache: "no-store" });
-      const data = await res.json();
-      const list = data.pins || [];
-      setPins(list);
-      setLatest(list[0] || null);
-    } catch (err) {
-      console.error("Failed to load pins", err);
-    }
-  }
-
-  async function generatePin() {
-    setLoading(true);
-    await fetch("/api/pins", { method: "POST" });
-    setLoading(false);
-    loadPins();
-  }
-
-  async function copy(text: string) {
-    try {
-      await navigator.clipboard.writeText(text);
-      setCopied(true);
-      setTimeout(() => setCopied(false), 1000);
-    } catch {}
-  }
-
-  // Action for the Sidebar Click
-  const handleSimulateTrinity = () => {
-    setIsSimulating(true);
-    setSimStep(0);
-  };
-
-  // Logic for the simulation "typing" effect
-  useEffect(() => {
-    if (isSimulating && simStep < simLines.length) {
-      const timer = setTimeout(() => setSimStep(s => s + 1), 800);
-      return () => clearTimeout(timer);
-    }
-  }, [isSimulating, simStep]);
+  const [data, setData] = useState<ScanResult | null>(null);
 
   useEffect(() => {
-    loadPins();
-    const t = setInterval(loadPins, 4000);
-    return () => clearInterval(t);
-  }, []);
+    // In a real app, you would fetch(api/results/${params.id})
+    // For now, let's simulate a high-tech response
+    setData({
+      id: params.id,
+      pin: "HUM7W9",
+      status: "COMPLETED",
+      scanTime: "2026-01-31 19:21",
+      score: 98,
+      threats: [
+        { name: "Process Integrity", status: "clean", info: "All background tasks verified." },
+        { name: "Memory Strings", status: "flagged", info: "Suspicious pattern in heap memory." },
+        { name: "Driver Verification", status: "clean", info: "No unsigned drivers detected." },
+      ],
+      systemLogs: [
+        "Initializing Star Mac Core...",
+        "Scanning process tree...",
+        "Analyzing memory offsets...",
+        "Verification successful."
+      ]
+    });
+  }, [params.id]);
 
-  const stats = useMemo(() => {
-    const total = pins.length;
-    const finished = pins.filter((p) => p.hasResults).length;
-    const pending = total - finished;
-    return { total, pending, finished };
-  }, [pins]);
+  if (!data) return null;
 
   return (
-    <main className="min-h-screen text-white relative overflow-hidden bg-[#0a0d11]">
-      {/* ===== SIMULATION MODAL ===== */}
-      {isSimulating && (
-        <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/80 backdrop-blur-md p-6">
-          <div className="w-full max-w-lg rounded-2xl border border-blue-500/50 bg-[#0f141b] p-8 shadow-[0_0_50px_rgba(59,130,246,0.3)]">
-            <div className="flex items-center gap-2 mb-6 text-blue-400 font-mono">
-              <ZapIcon />
-              <span className="font-bold tracking-widest uppercase text-sm">Trinity Simulation Engine</span>
-            </div>
-            <div className="space-y-2 font-mono text-sm">
-              {simLines.slice(0, simStep).map((line, i) => (
-                <div key={i} className="text-blue-100/80 animate-in fade-in slide-in-from-left-2">
-                  {line}
+    <main className="min-h-screen bg-[#0a0d11] text-white p-6 font-sans">
+      <div className="mx-auto max-w-5xl">
+        {/* HEADER */}
+        <div className="flex items-center justify-between mb-8">
+          <button 
+            onClick={() => router.back()}
+            className="text-sm text-blue-400 hover:text-blue-300 transition flex items-center gap-2"
+          >
+            ← Back to Dashboard
+          </button>
+          <div className="text-right">
+            <div className="text-xs text-white/40 uppercase tracking-widest">Report ID</div>
+            <div className="text-sm font-mono text-blue-300">{data.id}</div>
+          </div>
+        </div>
+
+        <div className="grid gap-6 md:grid-cols-3">
+          {/* OVERVIEW CARD */}
+          <div className="md:col-span-2 rounded-2xl border border-white/5 bg-[#0f141b]/80 p-8 backdrop-blur shadow-xl">
+            <h1 className="text-2xl font-bold mb-1">Scan Analysis</h1>
+            <p className="text-white/40 text-sm mb-6">Detailed integrity report for Pin: <span className="text-blue-400 font-mono">{data.pin}</span></p>
+            
+            <div className="space-y-4">
+              {data.threats.map((threat, i) => (
+                <div key={i} className="flex items-center justify-between p-4 rounded-xl bg-white/[0.02] border border-white/5">
+                  <div>
+                    <div className="font-semibold text-sm">{threat.name}</div>
+                    <div className="text-xs text-white/40">{threat.info}</div>
+                  </div>
+                  <div className={`text-[10px] font-bold uppercase px-3 py-1 rounded-full border ${
+                    threat.status === 'clean' ? 'bg-blue-500/10 text-blue-400 border-blue-500/20' : 'bg-red-500/10 text-red-400 border-red-500/20'
+                  }`}>
+                    {threat.status}
+                  </div>
                 </div>
               ))}
-              {simStep < simLines.length && (
-                <div className="h-4 w-2 bg-blue-400 animate-pulse inline-block" />
-              )}
             </div>
-            {simStep === simLines.length && (
-              <button 
-                onClick={() => setIsSimulating(false)}
-                className="mt-8 w-full rounded-xl bg-blue-500 py-3 font-bold text-black hover:bg-blue-400 transition"
-              >
-                CLOSE TERMINAL
-              </button>
-            )}
+          </div>
+
+          {/* SCORE CARD */}
+          <div className="rounded-2xl border border-white/5 bg-[#0f141b]/80 p-8 backdrop-blur shadow-xl flex flex-col items-center justify-center text-center">
+            <div className="text-xs text-white/40 uppercase tracking-widest mb-4">Security Score</div>
+            <div className="relative flex items-center justify-center">
+               {/* Simple Radial Progress */}
+               <svg className="w-32 h-32 transform -rotate-90">
+                <circle cx="64" cy="64" r="58" stroke="currentColor" strokeWidth="8" fill="transparent" className="text-white/5" />
+                <circle cx="64" cy="64" r="58" stroke="currentColor" strokeWidth="8" fill="transparent" strokeDasharray={364.4} strokeDashoffset={364.4 - (364.4 * data.score) / 100} className="text-blue-500" />
+              </svg>
+              <span className="absolute text-3xl font-bold">{data.score}%</span>
+            </div>
+            <div className="mt-6 text-xs text-blue-400 font-medium">STATUS: {data.status}</div>
+          </div>
+
+          {/* SYSTEM LOGS */}
+          <div className="md:col-span-3 rounded-2xl border border-white/5 bg-[#0f141b]/80 p-6 backdrop-blur shadow-xl">
+            <div className="text-xs text-white/40 uppercase tracking-widest mb-4">Execution Logs</div>
+            <div className="bg-black/40 rounded-xl p-4 font-mono text-xs text-blue-200/60 leading-relaxed">
+              {data.systemLogs.map((log, i) => (
+                <div key={i} className="mb-1">{`[${data.scanTime}] ${log}`}</div>
+              ))}
+            </div>
           </div>
         </div>
-      )}
-
-      {/* ===== PREMIUM MOVING BACKGROUND ===== */}
-      <div className="pointer-events-none absolute inset-0">
-        <div className="absolute -bottom-40 left-1/2 h-[520px] w-[900px] -translate-x-1/2 rounded-full bg-blue-500/10 blur-[160px]" />
-        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,rgba(0,0,0,0)_0%,rgba(0,0,0,0.6)_55%,rgba(0,0,0,0.95)_100%)]" />
-        <div
-          className="absolute inset-0 opacity-[0.13]
-          [background-image:linear-gradient(to_right,rgba(255,255,255,0.08)_1px,transparent_1px),
-          linear-gradient(to_bottom,rgba(255,255,255,0.08)_1px,transparent_1px)]
-          [background-size:70px_70px]"
-        />
-        <Particles />
-      </div>
-
-      {/* ===== STICKY TOP NAV ===== */}
-      <div className="relative z-10 sticky top-0 border-b border-white/10 bg-black/55 backdrop-blur">
-        <div className="mx-auto max-w-7xl px-6 py-4 flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <div className="h-9 w-9 rounded-xl border border-white/10 bg-white/5 grid place-items-center">
-              <span className="text-blue-300 font-bold">S</span>
-            </div>
-            <div className="text-lg font-semibold tracking-wide">
-              Star <span className="text-blue-400">Dashboard</span>
-            </div>
-          </div>
-
-          <div className="flex items-center gap-2 text-sm">
-            <a href="/" className="rounded-xl px-3 py-2 hover:bg-white/5">Home</a>
-            <a href="/dashboard" className="rounded-xl px-3 py-2 bg-white/5">Dashboard</a>
-
-            {loggedIn ? (
-              <a
-                href="/api/auth/logout"
-                className="ml-2 flex items-center gap-2 rounded-xl bg-zinc-800 px-4 py-2 font-semibold text-white hover:bg-zinc-700 transition border border-white/10"
-              >
-                ↩ Sign out
-              </a>
-            ) : (
-              <a
-                href="/api/auth/login"
-                className="ml-2 flex items-center gap-2 rounded-xl bg-indigo-500 px-4 py-2 font-semibold text-white hover:opacity-90 transition shadow-[0_15px_60px_rgba(99,102,241,0.35)]"
-              >
-                → Discord login
-              </a>
-            )}
-          </div>
-        </div>
-      </div>
-
-      {/* ===== LAYOUT ===== */}
-      <div className="relative z-10 mx-auto max-w-7xl px-6 py-8 grid gap-6 md:grid-cols-[240px_1fr]">
-        <aside className="rounded-2xl border border-white/10 bg-[#0f141b]/75 backdrop-blur p-4 h-fit shadow-[0_30px_120px_rgba(0,0,0,0.45)]">
-          <div className="text-xs tracking-widest text-white/40 px-3 pb-3">MENU</div>
-          <SidebarItem 
-            label="Dashboard" 
-            icon={<GridIcon />} 
-            active 
-            onClick={() => router.push("/dashboard")} 
-          />
-          <SidebarItem 
-            label="My Pins" 
-            icon={<PinIcon />} 
-            onClick={() => loadPins()} 
-          />
-          <SidebarItem 
-            label="Simulate Trinity" 
-            icon={<ZapIcon />} 
-            onClick={handleSimulateTrinity}
-          />
-          <div className="mt-4 pt-4 border-t border-white/10">
-            <a
-              href="https://discord.gg/rHy3W7Za"
-              target="_blank"
-              rel="noreferrer"
-              className="flex items-center gap-3 rounded-xl px-4 py-3 text-white/70 hover:text-white hover:bg-white/5 border border-white/10 transition"
-            >
-              <SupportIcon />
-              Discord Support
-            </a>
-          </div>
-        </aside>
-
-        <section>
-          <div className="flex items-center justify-between flex-wrap gap-4">
-            <div>
-              <h1 className="text-3xl font-bold">My Pins</h1>
-              <p className="mt-1 text-white/60">Generate pins, track status, and view results.</p>
-            </div>
-            <button
-              onClick={generatePin}
-              disabled={loading}
-              className="rounded-xl bg-blue-500 px-5 py-2 font-semibold text-black hover:opacity-90 disabled:opacity-50 transition shadow-[0_20px_70px_rgba(59,130,246,0.12)]"
-            >
-              {loading ? "Creating..." : "+ Create Pin"}
-            </button>
-          </div>
-
-          {latest && (
-            <div className="mt-6 rounded-2xl border border-blue-500/30 bg-blue-500/10 p-5 backdrop-blur shadow-[0_30px_120px_rgba(59,130,246,0.06)]">
-              <div className="text-sm text-white/80 mb-2">Latest PIN — share this with the person being checked:</div>
-              <div className="flex items-center gap-4 flex-wrap">
-                <div className="text-2xl font-mono tracking-widest text-blue-300">{latest.pin}</div>
-                <button
-                  onClick={() => copy(latest.pin)}
-                  className="rounded-lg bg-black/40 px-4 py-2 text-sm hover:bg-black/60 border border-white/10 transition"
-                >
-                  {copied ? "Copied ✅" : "Copy"}
-                </button>
-                <span className="text-xs text-white/50">Created {new Date(latest.createdAt).toLocaleString()}</span>
-              </div>
-            </div>
-          )}
-
-          <div className="mt-6 grid gap-4 sm:grid-cols-3">
-            <StatPremium label="Total Pins" value={stats.total} />
-            <StatPremium label="Pending" value={stats.pending} />
-            <StatPremium label="Finished" value={stats.finished} />
-          </div>
-
-          <div className="mt-8 rounded-2xl border border-white/10 bg-[#0f141b]/75 backdrop-blur p-6 shadow-[0_30px_120px_rgba(0,0,0,0.45)]">
-            <div className="flex items-center justify-between mb-4 flex-wrap gap-3">
-              <div className="text-sm text-white/70">Recent pins (auto-refresh every 4s)</div>
-              <button
-                onClick={loadPins}
-                className="rounded-lg bg-black/40 px-4 py-2 text-sm hover:bg-black/60 border border-white/10 transition"
-              >
-                Refresh
-              </button>
-            </div>
-
-            <div className="grid grid-cols-4 text-sm text-white/50 pb-3 border-b border-white/10">
-              <div>Pin</div>
-              <div>Status</div>
-              <div>Created</div>
-              <div className="text-right">Action</div>
-            </div>
-
-            <div className="divide-y divide-white/10">
-              {pins.length === 0 ? (
-                <div className="py-10 text-center text-white/60">No pins yet.</div>
-              ) : (
-                pins.map((p) => (
-                  <div key={p.id} className="grid grid-cols-4 py-4 text-sm items-center hover:bg-white/5 transition rounded-xl px-1">
-                    <div className="font-mono tracking-widest text-blue-300">{p.pin}</div>
-                    <div><Badge tone={p.hasResults ? "good" : "neutral"}>{p.hasResults ? "Finished" : "Pending"}</Badge></div>
-                    <div className="text-white/55">{new Date(p.createdAt).toLocaleTimeString()}</div>
-                    <div className="flex justify-end">
-                      <button
-                        onClick={() => copy(p.pin)}
-                        className="rounded-lg bg-black/35 px-3 py-2 text-xs hover:bg-black/55 border border-white/10 transition"
-                      >
-                        Copy
-                      </button>
-                    </div>
-                  </div>
-                ))
-              )}
-            </div>
-          </div>
-        </section>
       </div>
     </main>
-  );
-}
-
-/* ===== UI COMPONENTS ===== */
-
-function SidebarItem({ label, icon, active, onClick }: { label: string; icon?: React.ReactNode; active?: boolean; onClick?: () => void; }) {
-  return (
-    <button
-      onClick={onClick}
-      className={[
-        "mb-2 w-full rounded-xl px-4 py-3 font-semibold cursor-pointer border transition flex items-center gap-3 text-left outline-none",
-        active ? "bg-blue-500/15 border-blue-500/30 text-blue-200" : "bg-transparent border-white/10 text-white/70 hover:bg-white/5",
-      ].join(" ")}
-    >
-      <span className="text-blue-300">{icon}</span>
-      {label}
-    </button>
-  );
-}
-
-function StatPremium({ label, value }: { label: string; value: number }) {
-  return (
-    <div className="rounded-2xl border border-white/10 bg-[#0f141b]/75 backdrop-blur p-5 shadow-xl">
-      <div className="text-sm text-white/60">{label}</div>
-      <div className="mt-1 text-2xl font-bold text-blue-200">{value}</div>
-      <div className="mt-3 h-1 rounded-full bg-white/10 overflow-hidden">
-        <div className="h-full w-2/3 bg-blue-500/40" />
-      </div>
-    </div>
-  );
-}
-
-function Badge({ tone, children }: { tone: "good" | "neutral"; children: React.ReactNode; }) {
-  const cls = tone === "good" ? "border-blue-500/30 bg-blue-500/10 text-blue-200" : "border-white/15 bg-white/5 text-white/75";
-  return <span className={["inline-flex items-center rounded-full border px-3 py-1 text-xs font-semibold", cls].join(" ")}>{children}</span>;
-}
-
-function Particles() {
-  const dots = Array.from({ length: 44 }, (_, i) => i);
-  return (
-    <div className="absolute inset-0">
-      {dots.map((i) => (
-        <span
-          key={i}
-          className="absolute rounded-full bg-blue-200/30 blur-[0.3px] animate-float"
-          style={{
-            width: `${2 + (i % 3)}px`, height: `${2 + (i % 3)}px`,
-            left: `${(i * 97) % 100}%`, top: `${(i * 53) % 100}%`,
-            animationDelay: `${(i % 10) * 0.35}s`, opacity: 0.2 + (i % 5) * 0.12,
-          }}
-        />
-      ))}
-    </div>
-  );
-}
-
-/* ===== ICON COMPONENTS (Fixed for Build) ===== */
-function GridIcon() {
-  return (
-    <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
-      <path d="M4 4h7v7H4V4zm9 0h7v7h-7V4zM4 13h7v7H4v-7zm9 0h7v7h-7v-7z" stroke="currentColor" strokeWidth="2" />
-    </svg>
-  );
-}
-function PinIcon() {
-  return (
-    <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
-      <path d="M12 22s7-5 7-12a7 7 0 10-14 0c0 7 7 12 7 12z" stroke="currentColor" strokeWidth="2" />
-      <circle cx="12" cy="10" r="2" stroke="currentColor" strokeWidth="2" />
-    </svg>
-  );
-}
-function ZapIcon() {
-  return (
-    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-      <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z" strokeLinecap="round" strokeLinejoin="round" />
-    </svg>
-  );
-}
-function SupportIcon() {
-  return (
-    <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
-      <path d="M4 12a8 8 0 0116 0v7a2 2 0 01-2 2h-2" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
-      <path d="M4 12v5a2 2 0 002 2h2v-7H6a2 2 0 00-2 2z" stroke="currentColor" strokeWidth="2" />
-      <path d="M20 12v5a2 2 0 01-2 2h-2v-7h2a2 2 0 012 2z" stroke="currentColor" strokeWidth="2" />
-    </svg>
   );
 }
