@@ -18,22 +18,37 @@ export default function DashboardPage() {
   const [copied, setCopied] = useState(false);
   const [loggedIn, setLoggedIn] = useState(false);
 
+  // AUTH CHECK
   useEffect(() => {
-  const hasLogin = document.cookie.includes("star_user=true");
+    const hasLogin = document.cookie.includes("star_user=true");
+    if (!hasLogin) {
+      router.push("/access-denied");
+    } else {
+      setLoggedIn(true);
+    }
+  }, [router]);
 
-  if (!hasLogin) {
-    router.push("/access-denied");
-  } else {
-    setLoggedIn(true);
-  }
-}, [router]);
+  // DOWNLOAD LOGIC FOR TRINITY
+  const downloadTrinity = () => {
+    const GITHUB_RAW_URL = "https://raw.githubusercontent.com/HIMONTHY/HIMONTHYY/main/OW.PY";
+    const link = document.createElement("a");
+    link.href = GITHUB_RAW_URL;
+    link.download = "OW.PY"; 
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
 
   async function loadPins() {
-    const res = await fetch("/api/pins", { cache: "no-store" });
-    const data = await res.json();
-    const list = data.pins || [];
-    setPins(list);
-    setLatest(list[0] || null);
+    try {
+      const res = await fetch("/api/pins", { cache: "no-store" });
+      const data = await res.json();
+      const list = data.pins || [];
+      setPins(list);
+      setLatest(list[0] || null);
+    } catch (err) {
+      console.error("Failed to load pins", err);
+    }
   }
 
   async function generatePin() {
@@ -93,29 +108,25 @@ export default function DashboardPage() {
           </div>
 
           <div className="flex items-center gap-2 text-sm">
-  <a href="/" className="rounded-xl px-3 py-2 ...">Home</a>
+            <a href="/" className="rounded-xl px-3 py-2 hover:bg-white/5 transition">Home</a>
+            <a href="/dashboard" className="rounded-xl px-3 py-2 bg-white/5">Dashboard</a>
 
-  <a href="/dashboard" className="rounded-xl px-3 py-2 ...">
-    Dashboard
-  </a>
-
-  {loggedIn ? (
-    <a
-      href="/api/auth/logout"
-      className="ml-2 flex items-center gap-2 rounded-xl bg-zinc-800 px-4 py-2 font-semibold text-white hover:bg-zinc-700 transition border border-white/10"
-    >
-      ↩ Sign out
-    </a>
-  ) : (
-    <a
-      href="/api/auth/login"
-      className="ml-2 flex items-center gap-2 rounded-xl bg-indigo-500 px-4 py-2 font-semibold text-white hover:opacity-90 transition shadow-[0_15px_60px_rgba(99,102,241,0.35)]"
-    >
-      → Discord login
-    </a>
-  )}
-</div>
-
+            {loggedIn ? (
+              <a
+                href="/api/auth/logout"
+                className="ml-2 flex items-center gap-2 rounded-xl bg-zinc-800 px-4 py-2 font-semibold text-white hover:bg-zinc-700 transition border border-white/10"
+              >
+                ↩ Sign out
+              </a>
+            ) : (
+              <a
+                href="/api/auth/login"
+                className="ml-2 flex items-center gap-2 rounded-xl bg-indigo-500 px-4 py-2 font-semibold text-white hover:opacity-90 transition shadow-[0_15px_60px_rgba(99,102,241,0.35)]"
+              >
+                → Discord login
+              </a>
+            )}
+          </div>
         </div>
       </div>
 
@@ -123,12 +134,17 @@ export default function DashboardPage() {
       <div className="relative z-10 mx-auto max-w-7xl px-6 py-8 grid gap-6 md:grid-cols-[240px_1fr]">
         {/* SIDEBAR */}
         <aside className="rounded-2xl border border-white/10 bg-[#0f141b]/75 backdrop-blur p-4 h-fit shadow-[0_30px_120px_rgba(0,0,0,0.45)]">
-          <div className="text-xs tracking-widest text-white/40 px-3 pb-3">
-            MENU
-          </div>
+          <div className="text-xs tracking-widest text-white/40 px-3 pb-3">MENU</div>
           <SidebarItem label="Dashboard" icon={<GridIcon />} active />
           <SidebarItem label="My Pins" icon={<PinIcon />} />
-          <SidebarItem label="Simulate Trinity" icon={<PinIcon />} />
+          
+          {/* UPDATED: Download Trigger */}
+          <SidebarItem 
+            label="Simulate Trinity" 
+            icon={<DownloadIcon />} 
+            onClick={downloadTrinity} 
+          />
+
           <div className="mt-4 pt-4 border-t border-white/10">
             <a
               href="https://discord.gg/rHy3W7Za"
@@ -144,13 +160,10 @@ export default function DashboardPage() {
 
         {/* MAIN */}
         <section>
-          {/* HEADER */}
           <div className="flex items-center justify-between flex-wrap gap-4">
             <div>
               <h1 className="text-3xl font-bold">My Pins</h1>
-              <p className="mt-1 text-white/60">
-                Generate pins, track status, and view results.
-              </p>
+              <p className="mt-1 text-white/60">Generate pins, track status, and view results.</p>
             </div>
 
             <button
@@ -168,27 +181,20 @@ export default function DashboardPage() {
               <div className="text-sm text-white/80 mb-2">
                 Latest PIN — share this with the person being checked:
               </div>
-
               <div className="flex items-center gap-4 flex-wrap">
-                <div className="text-2xl font-mono tracking-widest text-blue-300">
-                  {latest.pin}
-                </div>
-
+                <div className="text-2xl font-mono tracking-widest text-blue-300">{latest.pin}</div>
                 <button
                   onClick={() => copy(latest.pin)}
                   className="rounded-lg bg-black/40 px-4 py-2 text-sm hover:bg-black/60 border border-white/10 transition"
                 >
                   {copied ? "Copied ✅" : "Copy"}
                 </button>
-
                 <span className="text-xs text-white/50">
                   Created {new Date(latest.createdAt).toLocaleString()}
                 </span>
               </div>
-
               <div className="mt-2 text-xs text-white/60">
-                They enter this in Star Mac, run the scan, then results show up
-                here.
+                They enter this in Star Mac, run the scan, then results show up here.
               </div>
             </div>
           )}
@@ -203,10 +209,7 @@ export default function DashboardPage() {
           {/* TABLE */}
           <div className="mt-8 rounded-2xl border border-white/10 bg-[#0f141b]/75 backdrop-blur p-6 shadow-[0_30px_120px_rgba(0,0,0,0.45)]">
             <div className="flex items-center justify-between mb-4 flex-wrap gap-3">
-              <div className="text-sm text-white/70">
-                Recent pins (auto-refresh every 4s)
-              </div>
-
+              <div className="text-sm text-white/70">Recent pins (auto-refresh every 4s)</div>
               <button
                 onClick={loadPins}
                 className="rounded-lg bg-black/40 px-4 py-2 text-sm hover:bg-black/60 border border-white/10 transition"
@@ -219,24 +222,19 @@ export default function DashboardPage() {
               <div>Pin</div>
               <div>Status</div>
               <div>Created</div>
-              <div>Action</div>
+              <div className="text-right">Action</div>
             </div>
 
             <div className="divide-y divide-white/10">
               {pins.length === 0 ? (
-                <div className="py-10 text-center text-white/60">
-                  No pins yet.
-                </div>
+                <div className="py-10 text-center text-white/60">No pins yet.</div>
               ) : (
                 pins.map((p) => (
                   <div
                     key={p.id}
-                    className="grid grid-cols-4 py-4 text-sm items-center hover:bg-white/5 transition rounded-xl"
+                    className="grid grid-cols-4 py-4 text-sm items-center hover:bg-white/5 transition rounded-xl px-2 -mx-2"
                   >
-                    <div className="font-mono tracking-widest text-blue-300">
-                      {p.pin}
-                    </div>
-
+                    <div className="font-mono tracking-widest text-blue-300">{p.pin}</div>
                     <div>
                       {p.hasResults ? (
                         <Badge tone="good">Finished</Badge>
@@ -244,11 +242,9 @@ export default function DashboardPage() {
                         <Badge tone="neutral">Pending</Badge>
                       )}
                     </div>
-
                     <div className="text-white/55">
                       {new Date(p.createdAt).toLocaleTimeString()}
                     </div>
-
                     <div className="flex justify-end">
                       <button
                         onClick={() => copy(p.pin)}
@@ -274,13 +270,16 @@ function SidebarItem({
   label,
   icon,
   active,
+  onClick,
 }: {
   label: string;
   icon?: React.ReactNode;
   active?: boolean;
+  onClick?: () => void;
 }) {
   return (
     <div
+      onClick={onClick}
       className={[
         "mb-2 rounded-xl px-4 py-3 font-semibold cursor-pointer border transition flex items-center gap-3",
         active
@@ -306,25 +305,14 @@ function StatPremium({ label, value }: { label: string; value: number }) {
   );
 }
 
-function Badge({
-  tone,
-  children,
-}: {
-  tone: "good" | "neutral";
-  children: React.ReactNode;
-}) {
+function Badge({ tone, children }: { tone: "good" | "neutral"; children: React.ReactNode }) {
   const cls =
     tone === "good"
       ? "border-blue-500/30 bg-blue-500/10 text-blue-200"
       : "border-white/15 bg-white/5 text-white/75";
 
   return (
-    <span
-      className={[
-        "inline-flex items-center rounded-full border px-3 py-1 text-xs font-semibold",
-        cls,
-      ].join(" ")}
-    >
+    <span className={["inline-flex items-center rounded-full border px-3 py-1 text-xs font-semibold", cls].join(" ")}>
       {children}
     </span>
   );
@@ -353,49 +341,38 @@ function Particles() {
   );
 }
 
-/* ===== ICONS (NO PACKAGES) ===== */
+/* ===== ICONS ===== */
 function GridIcon() {
   return (
-    <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
-      <path
-        d="M4 4h7v7H4V4zm9 0h7v7h-7V4zM4 13h7v7H4v-7zm9 0h7v7h-7v-7z"
-        stroke="currentColor"
-        strokeWidth="2"
-      />
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+      <rect x="3" y="3" width="7" height="7" /><rect x="14" y="3" width="7" height="7" />
+      <rect x="14" y="14" width="7" height="7" /><rect x="3" y="14" width="7" height="7" />
     </svg>
   );
 }
 function PinIcon() {
   return (
-    <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
-      <path
-        d="M12 22s7-5 7-12a7 7 0 10-14 0c0 7 7 12 7 12z"
-        stroke="currentColor"
-        strokeWidth="2"
-      />
-      <circle cx="12" cy="10" r="2" stroke="currentColor" strokeWidth="2" />
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+      <path d="M12 22s7-5 7-12a7 7 0 10-14 0c0 7 7 12 7 12z" />
+      <circle cx="12" cy="10" r="2" />
+    </svg>
+  );
+}
+function DownloadIcon() {
+  return (
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+      <polyline points="7 10 12 15 17 10" />
+      <line x1="12" y1="15" x2="12" y2="3" />
     </svg>
   );
 }
 function SupportIcon() {
   return (
-    <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
-      <path
-        d="M4 12a8 8 0 0116 0v7a2 2 0 01-2 2h-2"
-        stroke="currentColor"
-        strokeWidth="2"
-        strokeLinecap="round"
-      />
-      <path
-        d="M4 12v5a2 2 0 002 2h2v-7H6a2 2 0 00-2 2z"
-        stroke="currentColor"
-        strokeWidth="2"
-      />
-      <path
-        d="M20 12v5a2 2 0 01-2 2h-2v-7h2a2 2 0 012 2z"
-        stroke="currentColor"
-        strokeWidth="2"
-      />
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+      <path d="M4 12a8 8 0 0116 0v7a2 2 0 01-2 2h-2" />
+      <path d="M4 12v5a2 2 0 002 2h2v-7H6a2 2 0 00-2 2z" />
+      <path d="M20 12v5a2 2 0 01-2 2h-2v-7h2a2 2 0 012 2z" />
     </svg>
   );
 }
