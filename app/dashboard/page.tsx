@@ -19,18 +19,8 @@ export default function DashboardPage() {
   const [loggedIn, setLoggedIn] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
 
-  // Simulation State
+  // Simulation State - Simplified
   const [isSimulating, setIsSimulating] = useState(false);
-  const [simStep, setSimStep] = useState(0);
-  const [showReport, setShowReport] = useState(false);
-
-  const simLines = [
-    "> Initializing Trinity Protocol...",
-    "> Bypassing neural buffers...",
-    "> Injecting Star Mac sequence...",
-    "> Synchronizing global state...",
-    "> Analysis complete. Generating report..."
-  ];
 
   // Authentication Check
   useEffect(() => {
@@ -64,21 +54,7 @@ export default function DashboardPage() {
 
   const handleSimulateTrinity = () => {
     setIsSimulating(true);
-    setSimStep(0);
-    setShowReport(false);
   };
-
-  // Logic for the simulation "typing" effect
-  useEffect(() => {
-    if (isSimulating && simStep < simLines.length) {
-      const timer = setTimeout(() => setSimStep(s => s + 1), 600);
-      return () => clearTimeout(timer);
-    } else if (isSimulating && simStep === simLines.length) {
-      // Small delay before showing the final report
-      const timer = setTimeout(() => setShowReport(true), 500);
-      return () => clearTimeout(timer);
-    }
-  }, [isSimulating, simStep]);
 
   useEffect(() => {
     loadPins();
@@ -100,60 +76,45 @@ export default function DashboardPage() {
   return (
     <main className="min-h-screen text-white relative overflow-hidden bg-[#0a0d11]">
       
-      {/* ===== INTEGRATED SIMULATION & RESULTS MODAL ===== */}
+      {/* ===== INSTANT RESULTS MODAL (TERMINAL REMOVED) ===== */}
       {isSimulating && (
         <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/90 backdrop-blur-xl p-4">
-          <div className="w-full max-w-2xl rounded-2xl border border-blue-500/30 bg-[#0f141b] shadow-[0_0_100px_rgba(59,130,246,0.2)] overflow-hidden">
+          <div className="w-full max-w-2xl rounded-2xl border border-blue-500/30 bg-[#0f141b] shadow-[0_0_100px_rgba(59,130,246,0.2)] overflow-hidden animate-in zoom-in-95 duration-300">
             
             {/* Modal Header */}
             <div className="flex items-center justify-between border-b border-white/10 bg-white/5 px-6 py-4">
               <div className="flex items-center gap-2 text-blue-400">
                 <ZapIcon />
-                <span className="text-xs font-bold uppercase tracking-widest">Trinity Core Simulation</span>
+                <span className="text-xs font-bold uppercase tracking-widest">Trinity Core Results</span>
               </div>
-              <button onClick={() => setIsSimulating(false)} className="text-white/40 hover:text-white">✕</button>
+              <button onClick={() => setIsSimulating(false)} className="text-white/40 hover:text-white transition-colors">✕</button>
             </div>
 
             <div className="p-8">
-              {!showReport ? (
-                /* PHASE 1: TERMINAL TYPING */
-                <div className="space-y-3 font-mono text-sm">
-                  {simLines.slice(0, simStep).map((line, i) => (
-                    <div key={i} className="text-blue-100/70 animate-in fade-in slide-in-from-left-2">
-                      {line}
-                    </div>
-                  ))}
-                  <div className="h-4 w-2 bg-blue-500 animate-pulse inline-block" />
+              <div className="flex items-center justify-between mb-8">
+                <div>
+                  <h2 className="text-2xl font-bold text-white">Analysis Results</h2>
+                  <p className="text-xs text-white/40 uppercase tracking-tighter">System Integrity: <span className="text-blue-400">Secure</span></p>
                 </div>
-              ) : (
-                /* PHASE 2: DETAILED RESULTS VIEW */
-                <div className="animate-in zoom-in-95 duration-500">
-                  <div className="flex items-center justify-between mb-8">
-                    <div>
-                      <h2 className="text-2xl font-bold text-white">Analysis Results</h2>
-                      <p className="text-xs text-white/40 uppercase tracking-tighter">System Integrity: <span className="text-blue-400">Secure</span></p>
-                    </div>
-                    <div className="text-right">
-                      <div className="text-3xl font-black text-blue-500">98%</div>
-                      <div className="text-[10px] text-white/30 uppercase tracking-widest">Safety Score</div>
-                    </div>
-                  </div>
-
-                  <div className="grid gap-3">
-                    <ResultRow label="Process Integrity" status="Verified" info="No suspicious hooks found." />
-                    <ResultRow label="Memory Buffers" status="Clean" info="Heap allocation synchronized." />
-                    <ResultRow label="Neural Link" status="Active" info="Connection bypass successful." />
-                    <ResultRow label="Star Mac Version" status="v2.4.1" info="Latest security patch applied." />
-                  </div>
-
-                  <button 
-                    onClick={() => setIsSimulating(false)}
-                    className="mt-8 w-full rounded-xl bg-blue-500 py-3 text-sm font-bold text-black hover:bg-blue-400 transition shadow-[0_0_30px_rgba(59,130,246,0.3)]"
-                  >
-                    TERMINATE SESSION
-                  </button>
+                <div className="text-right">
+                  <div className="text-3xl font-black text-blue-500">98%</div>
+                  <div className="text-[10px] text-white/30 uppercase tracking-widest">Safety Score</div>
                 </div>
-              )}
+              </div>
+
+              <div className="grid gap-3">
+                <ResultRow label="Process Integrity" status="Verified" info="No suspicious hooks found." />
+                <ResultRow label="Memory Buffers" status="Clean" info="Heap allocation synchronized." />
+                <ResultRow label="Neural Link" status="Active" info="Connection bypass successful." />
+                <ResultRow label="Star Mac Version" status="v2.4.1" info="Latest security patch applied." />
+              </div>
+
+              <button 
+                onClick={() => setIsSimulating(false)}
+                className="mt-8 w-full rounded-xl bg-blue-500 py-3 text-sm font-bold text-black hover:bg-blue-400 transition shadow-[0_0_30px_rgba(59,130,246,0.3)]"
+              >
+                TERMINATE SESSION
+              </button>
             </div>
           </div>
         </div>
@@ -186,7 +147,6 @@ export default function DashboardPage() {
       </div>
 
       <div className="relative z-10 mx-auto max-w-7xl px-6 py-8 grid gap-6 md:grid-cols-[240px_1fr]">
-        {/* SIDEBAR */}
         <aside className="rounded-2xl border border-white/10 bg-[#0f141b]/75 backdrop-blur p-4 h-fit">
           <div className="text-xs tracking-widest text-white/40 px-3 pb-3">MENU</div>
           <SidebarItem label="Dashboard" icon={<GridIcon />} active onClick={() => router.push("/dashboard")} />
@@ -194,7 +154,6 @@ export default function DashboardPage() {
           <SidebarItem label="Simulate Trinity" icon={<ZapIcon />} onClick={handleSimulateTrinity} />
         </aside>
 
-        {/* MAIN CONTENT */}
         <section>
           <div className="flex items-center justify-between flex-wrap gap-4 mb-6">
             <div>
