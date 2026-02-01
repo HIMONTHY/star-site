@@ -19,7 +19,7 @@ export default function DashboardPage() {
   const [loggedIn, setLoggedIn] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
 
-  // Simulation State - Simplified
+  // Simulation State
   const [isSimulating, setIsSimulating] = useState(false);
 
   // Authentication Check
@@ -62,8 +62,11 @@ export default function DashboardPage() {
     return () => clearInterval(t);
   }, []);
 
+  // Filter pins based on search
   const filteredPins = useMemo(() => {
-    return pins.filter((p) => p.pin.toLowerCase().includes(searchQuery.toLowerCase()));
+    return pins.filter((p) => 
+      p.pin.toLowerCase().includes(searchQuery.toLowerCase())
+    );
   }, [pins, searchQuery]);
 
   const stats = useMemo(() => {
@@ -76,7 +79,7 @@ export default function DashboardPage() {
   return (
     <main className="min-h-screen text-white relative overflow-hidden bg-[#0a0d11]">
       
-      {/* ===== INSTANT RESULTS MODAL (TERMINAL REMOVED) ===== */}
+      {/* ===== INSTANT RESULTS MODAL ===== */}
       {isSimulating && (
         <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/90 backdrop-blur-xl p-4">
           <div className="w-full max-w-2xl rounded-2xl border border-blue-500/30 bg-[#0f141b] shadow-[0_0_100px_rgba(59,130,246,0.2)] overflow-hidden animate-in zoom-in-95 duration-300">
@@ -136,12 +139,18 @@ export default function DashboardPage() {
             <div className="h-9 w-9 rounded-xl border border-white/10 bg-white/5 grid place-items-center">
               <span className="text-blue-300 font-bold">S</span>
             </div>
-            <div className="text-lg font-semibold tracking-wide">Star <span className="text-blue-400">Dashboard</span></div>
+            <div className="text-lg font-semibold tracking-wide">
+              Star <span className="text-blue-400">Dashboard</span>
+            </div>
           </div>
           <div className="flex items-center gap-2 text-sm">
             <a href="/" className="rounded-xl px-3 py-2 hover:bg-white/5">Home</a>
             <a href="/dashboard" className="rounded-xl px-3 py-2 bg-white/5">Dashboard</a>
-            {loggedIn && <a href="/api/auth/logout" className="ml-2 flex items-center gap-2 rounded-xl bg-zinc-800 px-4 py-2 font-semibold text-white border border-white/10">Sign out</a>}
+            {loggedIn ? (
+              <a href="/api/auth/logout" className="ml-2 flex items-center gap-2 rounded-xl bg-zinc-800 px-4 py-2 font-semibold text-white hover:bg-zinc-700 transition border border-white/10">↩ Sign out</a>
+            ) : (
+              <a href="/api/auth/login" className="ml-2 flex items-center gap-2 rounded-xl bg-indigo-500 px-4 py-2 font-semibold text-white hover:opacity-90 transition shadow-[0_15px_60px_rgba(99,102,241,0.35)]">→ Discord login</a>
+            )}
           </div>
         </div>
       </div>
@@ -152,29 +161,49 @@ export default function DashboardPage() {
           <SidebarItem label="Dashboard" icon={<GridIcon />} active onClick={() => router.push("/dashboard")} />
           <SidebarItem label="My Pins" icon={<PinIcon />} onClick={() => loadPins()} />
           <SidebarItem label="Simulate Trinity" icon={<ZapIcon />} onClick={handleSimulateTrinity} />
+          <div className="mt-4 pt-4 border-t border-white/10">
+            <a href="https://discord.gg/rHy3W7Za" target="_blank" rel="noreferrer" className="flex items-center gap-3 rounded-xl px-4 py-3 text-white/70 hover:text-white hover:bg-white/5 transition">
+              <SupportIcon /> Discord Support
+            </a>
+          </div>
         </aside>
 
         <section>
           <div className="flex items-center justify-between flex-wrap gap-4 mb-6">
             <div>
               <h1 className="text-3xl font-bold">My Pins</h1>
-              <p className="mt-1 text-white/60 text-sm">Generate pins and track scan status.</p>
+              <p className="mt-1 text-white/60">Generate pins, track status, and view results.</p>
             </div>
             <button onClick={generatePin} disabled={loading} className="rounded-xl bg-blue-500 px-5 py-2 font-semibold text-black hover:opacity-90 disabled:opacity-50 transition">+ Create Pin</button>
           </div>
 
+          {/* STATS */}
           <div className="mb-8 grid gap-4 sm:grid-cols-3">
             <StatPremium label="Total Pins" value={stats.total} />
             <StatPremium label="Pending" value={stats.pending} />
             <StatPremium label="Finished" value={stats.finished} />
           </div>
 
-          {/* TABLE */}
+          {/* ===== TABLE UI (STRICT BLUE THEME) ===== */}
           <div className="rounded-2xl border border-white/5 bg-[#0f141b]/80 backdrop-blur shadow-2xl overflow-hidden">
             <div className="p-5 flex items-center justify-between gap-4 border-b border-white/5">
-              <input type="text" placeholder="Search by pin..." value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} className="w-full bg-[#161b22] border border-white/10 rounded-lg py-2 px-4 text-sm focus:outline-none focus:border-blue-500/50 transition text-blue-100 max-w-xs" />
-              <button onClick={loadPins} className="flex items-center gap-2 bg-[#161b22] border border-white/10 rounded-lg py-2 px-4 text-sm transition text-blue-300 hover:bg-[#1c2128]"><RefreshIcon /> Refresh</button>
+              <div className="relative flex-1 max-w-xs">
+                <input 
+                  type="text" 
+                  placeholder="Search by pin..." 
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  className="w-full bg-[#161b22] border border-white/10 rounded-lg py-2 px-4 text-sm focus:outline-none focus:border-blue-500/50 transition text-blue-100"
+                />
+              </div>
+              <button 
+                onClick={loadPins} 
+                className="flex items-center gap-2 bg-[#161b22] hover:bg-[#1c2128] border border-white/10 rounded-lg py-2 px-4 text-sm transition text-blue-300"
+              >
+                <RefreshIcon /> Refresh
+              </button>
             </div>
+
             <div className="w-full overflow-x-auto">
               <table className="w-full text-left border-collapse">
                 <thead>
@@ -182,20 +211,43 @@ export default function DashboardPage() {
                     <th className="px-6 py-4">Pin</th>
                     <th className="px-6 py-4">Status</th>
                     <th className="px-6 py-4">Used</th>
-                    <th className="px-6 py-4 text-right">Result</th>
+                    <th className="px-6 py-4">Result</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-white/5">
-                  {filteredPins.map((p) => (
-                    <tr key={p.id} className="group hover:bg-white/[0.02] transition">
-                      <td className="px-6 py-4"><span className="font-mono font-bold text-blue-400 tracking-wider">{p.pin}</span></td>
-                      <td className="px-6 py-4"><Badge tone={p.hasResults ? "good" : "neutral"}>{p.hasResults ? "Finished" : "Pending"}</Badge></td>
-                      <td className="px-6 py-4 text-sm text-white/40">{p.hasResults ? "1/31/26, 7:21 PM" : "—"}</td>
-                      <td className="px-6 py-4 text-right">
-                        {p.hasResults ? <button className="inline-flex items-center gap-2 text-blue-400 hover:underline text-sm font-medium"><ExternalIcon /> Results</button> : <span className="text-white/10">—</span>}
-                      </td>
+                  {filteredPins.length === 0 ? (
+                    <tr>
+                      <td colSpan={4} className="px-6 py-10 text-center text-white/40 text-sm">No pins found.</td>
                     </tr>
-                  ))}
+                  ) : (
+                    filteredPins.map((p) => (
+                      <tr key={p.id} className="group hover:bg-white/[0.02] transition">
+                        <td className="px-6 py-4">
+                          <span className="font-mono font-bold text-blue-400 tracking-wider">{p.pin}</span>
+                        </td>
+                        <td className="px-6 py-4">
+                          <Badge tone={p.hasResults ? "good" : "neutral"}>
+                            {p.hasResults ? "Finished" : "Pending"}
+                          </Badge>
+                        </td>
+                        <td className="px-6 py-4 text-sm text-white/40">
+                          {p.hasResults ? new Date(p.createdAt).toLocaleString([], { dateStyle: 'short', timeStyle: 'short' }) : "—"}
+                        </td>
+                        <td className="px-6 py-4">
+                          {p.hasResults ? (
+                            <a 
+                              href={`/results/${p.id}`} 
+                              className="inline-flex items-center gap-2 text-blue-400 hover:text-blue-300 hover:underline text-sm font-medium transition"
+                            >
+                              <ExternalIcon /> Results
+                            </a>
+                          ) : (
+                            <span className="text-white/20">—</span>
+                          )}
+                        </td>
+                      </tr>
+                    ))
+                  )}
                 </tbody>
               </table>
             </div>
@@ -206,7 +258,7 @@ export default function DashboardPage() {
   );
 }
 
-/* ===== UI HELPER COMPONENTS ===== */
+/* ===== UI COMPONENTS ===== */
 
 function ResultRow({ label, status, info }: { label: string; status: string; info: string }) {
   return (
@@ -230,7 +282,7 @@ function SidebarItem({ label, icon, active, onClick }: { label: string; icon?: R
 
 function StatPremium({ label, value }: { label: string; value: number }) {
   return (
-    <div className="rounded-2xl border border-white/5 bg-[#0f141b]/75 p-5">
+    <div className="rounded-2xl border border-white/5 bg-[#0f141b]/75 p-5 transition hover:bg-[#161b22]">
       <div className="text-xs font-medium text-white/40 uppercase tracking-wider">{label}</div>
       <div className="mt-1 text-2xl font-bold text-blue-200">{value}</div>
     </div>
@@ -238,24 +290,42 @@ function StatPremium({ label, value }: { label: string; value: number }) {
 }
 
 function Badge({ tone, children }: { tone: "good" | "neutral"; children: React.ReactNode; }) {
-  const cls = tone === "good" ? "bg-blue-500/10 text-blue-400 border border-blue-500/20" : "bg-white/5 text-white/40";
-  return <span className={["inline-flex items-center rounded-full px-3 py-1 text-[10px] font-bold uppercase tracking-wider", cls].join(" ")}>{children}</span>;
+  const cls = tone === "good" ? "bg-blue-500/10 text-blue-400 border border-blue-500/20" : "bg-[#1c2128] text-white/40";
+  return (
+    <span className={["inline-flex items-center rounded-full px-3 py-1 text-[11px] font-bold uppercase tracking-wider", cls].join(" ")}>
+      {children}
+    </span>
+  );
 }
 
 function Particles() {
-  const dots = Array.from({ length: 30 }, (_, i) => i);
+  const dots = Array.from({ length: 44 }, (_, i) => i);
   return (
     <div className="absolute inset-0">
       {dots.map((i) => (
-        <span key={i} className="absolute rounded-full bg-blue-200/20 blur-[1px] animate-pulse" style={{ width: `2px`, height: `2px`, left: `${(i * 13) % 100}%`, top: `${(i * 17) % 100}%` }} />
+        <span key={i} className="absolute rounded-full bg-blue-200/30 blur-[0.3px] animate-float" style={{ width: `${2 + (i % 3)}px`, height: `${2 + (i % 3)}px`, left: `${(i * 97) % 100}%`, top: `${(i * 53) % 100}%`, animationDelay: `${(i % 10) * 0.35}s`, opacity: 0.2 + (i % 5) * 0.12 }} />
       ))}
     </div>
   );
 }
 
-/* ===== ICONS ===== */
+function RefreshIcon() {
+  return (
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M23 4v6h-6M1 20v-6h6M3.51 9a9 9 0 0114.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0020.49 15" />
+    </svg>
+  );
+}
+
+function ExternalIcon() {
+  return (
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6M15 3h6v6M10 14L21 3" />
+    </svg>
+  );
+}
+
 function GridIcon() { return <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><rect x="3" y="3" width="7" height="7" /><rect x="14" y="3" width="7" height="7" /><rect x="14" y="14" width="7" height="7" /><rect x="3" y="14" width="7" height="7" /></svg>; }
 function PinIcon() { return <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z" /><circle cx="12" cy="10" r="3" /></svg>; }
 function ZapIcon() { return <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z" /></svg>; }
-function RefreshIcon() { return <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M23 4v6h-6M1 20v-6h6M3.51 9a9 9 0 0114.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0020.49 15" /></svg>; }
-function ExternalIcon() { return <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6M15 3h6v6M10 14L21 3" /></svg>; }
+function SupportIcon() { return <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z" /></svg>; }
