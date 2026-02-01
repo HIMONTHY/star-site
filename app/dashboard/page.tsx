@@ -18,6 +18,18 @@ export default function DashboardPage() {
   const [copied, setCopied] = useState(false);
   const [loggedIn, setLoggedIn] = useState(false);
 
+  // Simulation State
+  const [isSimulating, setIsSimulating] = useState(false);
+  const [simStep, setSimStep] = useState(0);
+
+  const simLines = [
+    "> Initializing Trinity Protocol...",
+    "> Bypassing neural buffers...",
+    "> Injecting Star Mac sequence...",
+    "> Synchronizing global state...",
+    "> Simulation Complete. Trinity Active."
+  ];
+
   // Authentication Check
   useEffect(() => {
     const hasLogin = document.cookie.includes("star_user=true");
@@ -58,9 +70,17 @@ export default function DashboardPage() {
 
   // Action for the Sidebar Click
   const handleSimulateTrinity = () => {
-    alert("Trinity Simulation Protocol Initiated...");
-    // You can replace this alert with router.push("/simulate") or an API call
+    setIsSimulating(true);
+    setSimStep(0);
   };
+
+  // Logic for the simulation "typing" effect
+  useEffect(() => {
+    if (isSimulating && simStep < simLines.length) {
+      const timer = setTimeout(() => setSimStep(s => s + 1), 800);
+      return () => clearTimeout(timer);
+    }
+  }, [isSimulating, simStep]);
 
   useEffect(() => {
     loadPins();
@@ -77,6 +97,36 @@ export default function DashboardPage() {
 
   return (
     <main className="min-h-screen text-white relative overflow-hidden bg-[#0a0d11]">
+      {/* ===== SIMULATION MODAL ===== */}
+      {isSimulating && (
+        <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/80 backdrop-blur-md p-6">
+          <div className="w-full max-w-lg rounded-2xl border border-blue-500/50 bg-[#0f141b] p-8 shadow-[0_0_50px_rgba(59,130,246,0.3)]">
+            <div className="flex items-center gap-2 mb-6 text-blue-400 font-mono">
+              <ZapIcon />
+              <span className="font-bold tracking-widest uppercase text-sm">Trinity Simulation Engine</span>
+            </div>
+            <div className="space-y-2 font-mono text-sm">
+              {simLines.slice(0, simStep).map((line, i) => (
+                <div key={i} className="text-blue-100/80 animate-in fade-in slide-in-from-left-2">
+                  {line}
+                </div>
+              ))}
+              {simStep < simLines.length && (
+                <div className="h-4 w-2 bg-blue-400 animate-pulse inline-block" />
+              )}
+            </div>
+            {simStep === simLines.length && (
+              <button 
+                onClick={() => setIsSimulating(false)}
+                className="mt-8 w-full rounded-xl bg-blue-500 py-3 font-bold text-black hover:bg-blue-400 transition"
+              >
+                CLOSE TERMINAL
+              </button>
+            )}
+          </div>
+        </div>
+      )}
+
       {/* ===== PREMIUM MOVING BACKGROUND ===== */}
       <div className="pointer-events-none absolute inset-0">
         <div className="glow-blob" />
@@ -144,7 +194,7 @@ export default function DashboardPage() {
             icon={<PinIcon />} 
             onClick={() => loadPins()} 
           />
-          {/* UPDATED: Added onClick logic here */}
+          
           <SidebarItem 
             label="Simulate Trinity" 
             icon={<ZapIcon />} 
@@ -294,7 +344,7 @@ function SidebarItem({
     <button
       onClick={onClick}
       className={[
-        "mb-2 w-full rounded-xl px-4 py-3 font-semibold cursor-pointer border transition flex items-center gap-3 text-left",
+        "mb-2 w-full rounded-xl px-4 py-3 font-semibold cursor-pointer border transition flex items-center gap-3 text-left outline-none",
         active
           ? "bg-blue-500/15 border-blue-500/30 text-blue-200 shadow-[0_25px_80px_rgba(16,185,129,0.12)]"
           : "bg-transparent border-white/10 text-white/70 hover:bg-white/5 hover:text-white",
