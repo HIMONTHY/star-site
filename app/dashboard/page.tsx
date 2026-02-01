@@ -53,7 +53,7 @@ export default function DashboardPage() {
 
   useEffect(() => {
     loadPins();
-    const t = setInterval(loadPins, 4000);
+    const t = setInterval(loadPins, 60000);
     return () => clearInterval(t);
   }, []);
 
