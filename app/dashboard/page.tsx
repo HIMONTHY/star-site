@@ -59,7 +59,6 @@ export default function DashboardPage() {
     } catch {}
   }
 
-  // Action for the Sidebar Click - Updated to trigger instant results
   const handleSimulateTrinity = () => {
     setIsSimulating(true);
   };
@@ -80,16 +79,15 @@ export default function DashboardPage() {
   return (
     <main className="min-h-screen text-white relative overflow-hidden bg-[#0a0d11]">
       
-      {/* ===== INSTANT RESULTS MODAL ===== */}
+      {/* ===== VIDEO-MATCHED RESULTS MODAL ===== */}
       {isSimulating && (
         <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/90 backdrop-blur-xl p-4">
-          <div className="w-full max-w-2xl rounded-2xl border border-blue-500/30 bg-[#0f141b] shadow-[0_0_100px_rgba(59,130,246,0.2)] overflow-hidden animate-in zoom-in-95 duration-300">
+          <div className="w-full max-w-2xl rounded-2xl border border-red-500/30 bg-[#0f141b] shadow-[0_0_100px_rgba(239,68,68,0.15)] overflow-hidden animate-in zoom-in-95 duration-300">
             
-            {/* Modal Header */}
             <div className="flex items-center justify-between border-b border-white/10 bg-white/5 px-6 py-4">
-              <div className="flex items-center gap-2 text-blue-400">
+              <div className="flex items-center gap-2 text-red-400">
                 <ZapIcon />
-                <span className="text-xs font-bold uppercase tracking-widest">Trinity Core Results</span>
+                <span className="text-xs font-bold uppercase tracking-widest">Automatic PC Checker - Scan Results</span>
               </div>
               <button onClick={() => setIsSimulating(false)} className="text-white/40 hover:text-white transition-colors">✕</button>
             </div>
@@ -97,25 +95,45 @@ export default function DashboardPage() {
             <div className="p-8">
               <div className="flex items-center justify-between mb-8">
                 <div>
-                  <h2 className="text-2xl font-bold text-white">Analysis Results</h2>
-                  <p className="text-xs text-white/40 uppercase tracking-tighter">System Integrity: <span className="text-blue-400">Secure</span></p>
+                  <h2 className="text-2xl font-bold text-white">Execution Logs</h2>
+                  <p className="text-xs text-white/40 uppercase tracking-tighter">Target: <span className="text-blue-400">Local_User_PC</span></p>
                 </div>
                 <div className="text-right">
-                  <div className="text-3xl font-black text-blue-500">98%</div>
-                  <div className="text-[10px] text-white/30 uppercase tracking-widest">Safety Score</div>
+                  <div className="text-3xl font-black text-red-500 tracking-tighter">FLAGGED</div>
+                  <div className="text-[10px] text-white/30 uppercase tracking-widest font-bold">Detection Level: High</div>
                 </div>
               </div>
 
               <div className="grid gap-3">
-                <ResultRow label="Process Integrity" status="Verified" info="No suspicious hooks found." />
-                <ResultRow label="Memory Buffers" status="Clean" info="Heap allocation synchronized." />
-                <ResultRow label="Neural Link" status="Active" info="Connection bypass successful." />
-                <ResultRow label="Star Mac Version" status="v2.4.1" info="Latest security patch applied." />
+                <ResultRow 
+                  label="Service Status (SysMain)" 
+                  status="CRITICAL" 
+                  info="Service is OFF. Prefetch generation blocked (Auto-Fail)." 
+                  isWarning 
+                />
+                <ResultRow 
+                  label="Registry Artifacts" 
+                  status="DETECTED" 
+                  info="Found Zeno.exe & Trinity strings in Shellbags." 
+                  isWarning 
+                />
+                <ResultRow 
+                  label="Roblox Event Logs" 
+                  status="BYPASS" 
+                  info="Manual deletion detected. Logs do not match system uptime." 
+                  isWarning 
+                />
+                <ResultRow 
+                  label="Unsigned Binaries" 
+                  status="4 FOUND" 
+                  info="Detected: Trinity.exe (renamed), memory_duct.exe." 
+                  isWarning 
+                />
               </div>
 
               <button 
                 onClick={() => setIsSimulating(false)}
-                className="mt-8 w-full rounded-xl bg-blue-500 py-3 text-sm font-bold text-black hover:bg-blue-400 transition shadow-[0_0_30px_rgba(59,130,246,0.3)]"
+                className="mt-8 w-full rounded-xl bg-red-600 py-3 text-sm font-bold text-white hover:bg-red-500 transition shadow-[0_0_30px_rgba(239,68,68,0.3)]"
               >
                 TERMINATE SESSION
               </button>
@@ -155,17 +173,11 @@ export default function DashboardPage() {
             <a href="/dashboard" className="rounded-xl px-3 py-2 bg-white/5">Dashboard</a>
 
             {loggedIn ? (
-              <a
-                href="/api/auth/logout"
-                className="ml-2 flex items-center gap-2 rounded-xl bg-zinc-800 px-4 py-2 font-semibold text-white hover:bg-zinc-700 transition border border-white/10"
-              >
+              <a href="/api/auth/logout" className="ml-2 flex items-center gap-2 rounded-xl bg-zinc-800 px-4 py-2 font-semibold text-white hover:bg-zinc-700 transition border border-white/10">
                 ↩ Sign out
               </a>
             ) : (
-              <a
-                href="/api/auth/login"
-                className="ml-2 flex items-center gap-2 rounded-xl bg-indigo-500 px-4 py-2 font-semibold text-white hover:opacity-90 transition shadow-[0_15px_60px_rgba(99,102,241,0.35)]"
-              >
+              <a href="/api/auth/login" className="ml-2 flex items-center gap-2 rounded-xl bg-indigo-500 px-4 py-2 font-semibold text-white hover:opacity-90 transition shadow-[0_15px_60px_rgba(99,102,241,0.35)]">
                 → Discord login
               </a>
             )}
@@ -176,36 +188,14 @@ export default function DashboardPage() {
       {/* ===== LAYOUT ===== */}
       <div className="relative z-10 mx-auto max-w-7xl px-6 py-8 grid gap-6 md:grid-cols-[240px_1fr]">
         <aside className="rounded-2xl border border-white/10 bg-[#0f141b]/75 backdrop-blur p-4 h-fit shadow-[0_30px_120px_rgba(0,0,0,0.45)]">
-          <div className="text-xs tracking-widest text-white/40 px-3 pb-3">
-            MENU
-          </div>
-          <SidebarItem 
-            label="Dashboard" 
-            icon={<GridIcon />} 
-            active 
-            onClick={() => router.push("/dashboard")} 
-          />
-          <SidebarItem 
-            label="My Pins" 
-            icon={<PinIcon />} 
-            onClick={() => loadPins()} 
-          />
-          
-          <SidebarItem 
-            label="Simulate Trinity" 
-            icon={<ZapIcon />} 
-            onClick={handleSimulateTrinity}
-          />
+          <div className="text-xs tracking-widest text-white/40 px-3 pb-3">MENU</div>
+          <SidebarItem label="Dashboard" icon={<GridIcon />} active onClick={() => router.push("/dashboard")} />
+          <SidebarItem label="My Pins" icon={<PinIcon />} onClick={() => loadPins()} />
+          <SidebarItem label="Simulate Trinity" icon={<ZapIcon />} onClick={handleSimulateTrinity} />
           
           <div className="mt-4 pt-4 border-t border-white/10">
-            <a
-              href="https://discord.gg/rHy3W7Za"
-              target="_blank"
-              rel="noreferrer"
-              className="flex items-center gap-3 rounded-xl px-4 py-3 text-white/70 hover:text-white hover:bg-white/5 border border-white/10 transition"
-            >
-              <SupportIcon />
-              Discord Support
+            <a href="https://discord.gg/rHy3W7Za" target="_blank" rel="noreferrer" className="flex items-center gap-3 rounded-xl px-4 py-3 text-white/70 hover:text-white hover:bg-white/5 border border-white/10 transition">
+              <SupportIcon /> Discord Support
             </a>
           </div>
         </aside>
@@ -214,38 +204,22 @@ export default function DashboardPage() {
           <div className="flex items-center justify-between flex-wrap gap-4">
             <div>
               <h1 className="text-3xl font-bold">My Pins</h1>
-              <p className="mt-1 text-white/60">
-                Generate pins, track status, and view results.
-              </p>
+              <p className="mt-1 text-white/60">Generate pins, track status, and view results.</p>
             </div>
-
-            <button
-              onClick={generatePin}
-              disabled={loading}
-              className="rounded-xl bg-blue-500 px-5 py-2 font-semibold text-black hover:opacity-90 disabled:opacity-50 transition shadow-[0_20px_70px_rgba(16,185,129,0.12)]"
-            >
+            <button onClick={generatePin} disabled={loading} className="rounded-xl bg-blue-500 px-5 py-2 font-semibold text-black hover:opacity-90 disabled:opacity-50 transition shadow-[0_20px_70px_rgba(16,185,129,0.12)]">
               {loading ? "Creating..." : "+ Create Pin"}
             </button>
           </div>
 
           {latest && (
             <div className="mt-6 rounded-2xl border border-blue-500/30 bg-blue-500/10 p-5 backdrop-blur shadow-[0_30px_120px_rgba(16,185,129,0.06)]">
-              <div className="text-sm text-white/80 mb-2">
-                Latest PIN — share this with the person being checked:
-              </div>
+              <div className="text-sm text-white/80 mb-2">Latest PIN — share this with the person being checked:</div>
               <div className="flex items-center gap-4 flex-wrap">
-                <div className="text-2xl font-mono tracking-widest text-blue-300">
-                  {latest.pin}
-                </div>
-                <button
-                  onClick={() => copy(latest.pin)}
-                  className="rounded-lg bg-black/40 px-4 py-2 text-sm hover:bg-black/60 border border-white/10 transition"
-                >
+                <div className="text-2xl font-mono tracking-widest text-blue-300">{latest.pin}</div>
+                <button onClick={() => copy(latest.pin)} className="rounded-lg bg-black/40 px-4 py-2 text-sm hover:bg-black/60 border border-white/10 transition">
                   {copied ? "Copied ✅" : "Copy"}
                 </button>
-                <span className="text-xs text-white/50">
-                  Created {new Date(latest.createdAt).toLocaleString()}
-                </span>
+                <span className="text-xs text-white/50">Created {new Date(latest.createdAt).toLocaleString()}</span>
               </div>
             </div>
           )}
@@ -258,55 +232,26 @@ export default function DashboardPage() {
 
           <div className="mt-8 rounded-2xl border border-white/10 bg-[#0f141b]/75 backdrop-blur p-6 shadow-[0_30px_120px_rgba(0,0,0,0.45)]">
             <div className="flex items-center justify-between mb-4 flex-wrap gap-3">
-              <div className="text-sm text-white/70">
-                Recent pins (auto-refresh every 4s)
-              </div>
-              <button
-                onClick={loadPins}
-                className="rounded-lg bg-black/40 px-4 py-2 text-sm hover:bg-black/60 border border-white/10 transition"
-              >
-                Refresh
-              </button>
+              <div className="text-sm text-white/70">Recent pins (auto-refresh every 4s)</div>
+              <button onClick={loadPins} className="rounded-lg bg-black/40 px-4 py-2 text-sm hover:bg-black/60 border border-white/10 transition">Refresh</button>
             </div>
-
             <div className="grid grid-cols-4 text-sm text-white/50 pb-3 border-b border-white/10">
               <div>Pin</div>
               <div>Status</div>
               <div>Created</div>
               <div className="text-right">Action</div>
             </div>
-
             <div className="divide-y divide-white/10">
               {pins.length === 0 ? (
-                <div className="py-10 text-center text-white/60">
-                  No pins yet.
-                </div>
+                <div className="py-10 text-center text-white/60">No pins yet.</div>
               ) : (
                 pins.map((p) => (
-                  <div
-                    key={p.id}
-                    className="grid grid-cols-4 py-4 text-sm items-center hover:bg-white/5 transition rounded-xl px-1"
-                  >
-                    <div className="font-mono tracking-widest text-blue-300">
-                      {p.pin}
-                    </div>
-                    <div>
-                      {p.hasResults ? (
-                        <Badge tone="good">Finished</Badge>
-                      ) : (
-                        <Badge tone="neutral">Pending</Badge>
-                      )}
-                    </div>
-                    <div className="text-white/55">
-                      {new Date(p.createdAt).toLocaleTimeString()}
-                    </div>
+                  <div key={p.id} className="grid grid-cols-4 py-4 text-sm items-center hover:bg-white/5 transition rounded-xl px-1">
+                    <div className="font-mono tracking-widest text-blue-300">{p.pin}</div>
+                    <div>{p.hasResults ? <Badge tone="good">Finished</Badge> : <Badge tone="neutral">Pending</Badge>}</div>
+                    <div className="text-white/55">{new Date(p.createdAt).toLocaleTimeString()}</div>
                     <div className="flex justify-end">
-                      <button
-                        onClick={() => copy(p.pin)}
-                        className="rounded-lg bg-black/35 px-3 py-2 text-xs hover:bg-black/55 border border-white/10 transition"
-                      >
-                        Copy
-                      </button>
+                      <button onClick={() => copy(p.pin)} className="rounded-lg bg-black/35 px-3 py-2 text-xs hover:bg-black/55 border border-white/10 transition">Copy</button>
                     </div>
                   </div>
                 ))
@@ -319,39 +264,26 @@ export default function DashboardPage() {
   );
 }
 
-/* ===== UI HELPER COMPONENTS ===== */
+/* ===== UPDATED HELPER COMPONENTS ===== */
 
-function ResultRow({ label, status, info }: { label: string; status: string; info: string }) {
+function ResultRow({ label, status, info, isWarning }: { label: string; status: string; info: string; isWarning?: boolean }) {
   return (
-    <div className="flex items-center justify-between p-4 rounded-xl bg-white/[0.03] border border-white/5">
+    <div className={`flex items-center justify-between p-4 rounded-xl bg-white/[0.03] border ${isWarning ? 'border-red-500/20' : 'border-white/5'}`}>
       <div>
         <div className="text-sm font-semibold text-white">{label}</div>
         <div className="text-[10px] text-white/40">{info}</div>
       </div>
-      <div className="text-[10px] font-bold text-blue-400 uppercase tracking-widest">{status}</div>
+      <div className={`text-[10px] font-bold uppercase tracking-widest ${isWarning ? 'text-red-400' : 'text-blue-400'}`}>{status}</div>
     </div>
   );
 }
 
-function SidebarItem({
-  label,
-  icon,
-  active,
-  onClick,
-}: {
-  label: string;
-  icon?: React.ReactNode;
-  active?: boolean;
-  onClick?: () => void;
-}) {
+function SidebarItem({ label, icon, active, onClick }: { label: string; icon?: React.ReactNode; active?: boolean; onClick?: () => void }) {
   return (
     <button
       onClick={onClick}
-      className={[
-        "mb-2 w-full rounded-xl px-4 py-3 font-semibold cursor-pointer border transition flex items-center gap-3 text-left outline-none",
-        active
-          ? "bg-blue-500/15 border-blue-500/30 text-blue-200 shadow-[0_25px_80px_rgba(16,185,129,0.12)]"
-          : "bg-transparent border-white/10 text-white/70 hover:bg-white/5 hover:text-white",
+      className={["mb-2 w-full rounded-xl px-4 py-3 font-semibold cursor-pointer border transition flex items-center gap-3 text-left outline-none", 
+        active ? "bg-blue-500/15 border-blue-500/30 text-blue-200" : "bg-transparent border-white/10 text-white/70 hover:bg-white/5 hover:text-white"
       ].join(" ")}
     >
       <span className="text-blue-300">{icon}</span>
@@ -372,28 +304,9 @@ function StatPremium({ label, value }: { label: string; value: number }) {
   );
 }
 
-function Badge({
-  tone,
-  children,
-}: {
-  tone: "good" | "neutral";
-  children: React.ReactNode;
-}) {
-  const cls =
-    tone === "good"
-      ? "border-blue-500/30 bg-blue-500/10 text-blue-200"
-      : "border-white/15 bg-white/5 text-white/75";
-
-  return (
-    <span
-      className={[
-        "inline-flex items-center rounded-full border px-3 py-1 text-xs font-semibold",
-        cls,
-      ].join(" ")}
-    >
-      {children}
-    </span>
-  );
+function Badge({ tone, children }: { tone: "good" | "neutral"; children: React.ReactNode }) {
+  const cls = tone === "good" ? "border-blue-500/30 bg-blue-500/10 text-blue-200" : "border-white/15 bg-white/5 text-white/75";
+  return <span className={["inline-flex items-center rounded-full border px-3 py-1 text-xs font-semibold", cls].join(" ")}>{children}</span>;
 }
 
 function Particles() {
@@ -401,17 +314,8 @@ function Particles() {
   return (
     <div className="absolute inset-0">
       {dots.map((i) => (
-        <span
-          key={i}
-          className="absolute rounded-full bg-blue-200/30 blur-[0.3px] animate-float"
-          style={{
-            width: `${2 + (i % 3)}px`,
-            height: `${2 + (i % 3)}px`,
-            left: `${(i * 97) % 100}%`,
-            top: `${(i * 53) % 100}%`,
-            animationDelay: `${(i % 10) * 0.35}s`,
-            opacity: 0.2 + (i % 5) * 0.12,
-          }}
+        <span key={i} className="absolute rounded-full bg-blue-200/30 blur-[0.3px] animate-float"
+          style={{ width: `${2 + (i % 3)}px`, height: `${2 + (i % 3)}px`, left: `${(i * 97) % 100}%`, top: `${(i * 53) % 100}%`, animationDelay: `${(i % 10) * 0.35}s`, opacity: 0.2 + (i % 5) * 0.12 }}
         />
       ))}
     </div>
@@ -419,34 +323,7 @@ function Particles() {
 }
 
 /* ===== ICONS ===== */
-function GridIcon() {
-  return (
-    <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
-      <path d="M4 4h7v7H4V4zm9 0h7v7h-7V4zM4 13h7v7H4v-7zm9 0h7v7h-7v-7z" stroke="currentColor" strokeWidth="2" />
-    </svg>
-  );
-}
-function PinIcon() {
-  return (
-    <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
-      <path d="M12 22s7-5 7-12a7 7 0 10-14 0c0 7 7 12 7 12z" stroke="currentColor" strokeWidth="2" />
-      <circle cx="12" cy="10" r="2" stroke="currentColor" strokeWidth="2" />
-    </svg>
-  );
-}
-function ZapIcon() {
-  return (
-    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-      <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z" strokeLinecap="round" strokeLinejoin="round" />
-    </svg>
-  );
-}
-function SupportIcon() {
-  return (
-    <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
-      <path d="M4 12a8 8 0 0116 0v7a2 2 0 01-2 2h-2" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
-      <path d="M4 12v5a2 2 0 002 2h2v-7H6a2 2 0 00-2 2z" stroke="currentColor" strokeWidth="2" />
-      <path d="M20 12v5a2 2 0 01-2 2h-2v-7h2a2 2 0 012 2z" stroke="currentColor" strokeWidth="2" />
-    </svg>
-  );
-}
+function GridIcon() { return <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M4 4h7v7H4V4zm9 0h7v7h-7V4zM4 13h7v7H4v-7zm9 0h7v7h-7v-7z" stroke="currentColor" strokeWidth="2" /></svg>; }
+function PinIcon() { return <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M12 22s7-5 7-12a7 7 0 10-14 0c0 7 7 12 7 12z" stroke="currentColor" strokeWidth="2" /><circle cx="12" cy="10" r="2" stroke="currentColor" strokeWidth="2" /></svg>; }
+function ZapIcon() { return <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z" strokeLinecap="round" strokeLinejoin="round" /></svg>; }
+function SupportIcon() { return <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M4 12a8 8 0 0116 0v7a2 2 0 01-2 2h-2" stroke="currentColor" strokeWidth="2" strokeLinecap="round" /><path d="M4 12v5a2 2 0 002 2h2v-7H6a2 2 0 00-2 2z" stroke="currentColor" strokeWidth="2" /><path d="M20 12v5a2 2 0 01-2 2h-2v-7h2a2 2 0 012 2z" stroke="currentColor" strokeWidth="2" /></svg>; }
