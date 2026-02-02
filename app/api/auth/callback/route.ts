@@ -7,6 +7,7 @@ const REDIRECT_URI = "https://star-site-psi.vercel.app/api/auth/callback";
 /* 🔐 ONLY THESE USERS CAN ACCESS */
 const ALLOWED_USERS = [
   "1165819222870466583", // fake for testing
+  "991886481754951770",
   // add real ones later
 ];
 
