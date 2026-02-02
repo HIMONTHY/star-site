@@ -8,7 +8,7 @@ type PinRow = {
   pin: string;
   createdAt: string;
   hasResults: boolean;
-  results?: any;
+  results?: any; 
 };
 
 export default function DashboardPage() {
@@ -19,7 +19,7 @@ export default function DashboardPage() {
   const [copied, setCopied] = useState(false);
   const [loggedIn, setLoggedIn] = useState(false);
 
-  // Results Modal State
+  // === MODAL STATE ===
   const [activeResults, setActiveResults] = useState<PinRow | null>(null);
 
   useEffect(() => {
@@ -54,6 +54,7 @@ export default function DashboardPage() {
     } catch {}
   }
 
+  // === MODAL FUNCTIONS ===
   function openResults(pin: PinRow) {
     setActiveResults(pin);
   }
@@ -64,7 +65,7 @@ export default function DashboardPage() {
 
   useEffect(() => {
     loadPins();
-    const t = setInterval(loadPins, 4000);
+    const t = setInterval(loadPins, 4000); // 4s refresh
     return () => clearInterval(t);
   }, []);
 
@@ -77,41 +78,56 @@ export default function DashboardPage() {
 
   return (
     <main className="min-h-screen text-white relative overflow-hidden bg-[#0a0d11]">
-      {/* Background markup stays same... */}
+      {/* ===== RESTORED PREMIUM MOVING BACKGROUND ===== */}
       <div className="pointer-events-none absolute inset-0">
         <div className="glow-blob" />
         <div className="absolute -bottom-40 left-1/2 h-[520px] w-[900px] -translate-x-1/2 rounded-full bg-blue-500/10 blur-[160px]" />
         <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,rgba(0,0,0,0)_0%,rgba(0,0,0,0.6)_55%,rgba(0,0,0,0.95)_100%)]" />
-        <div className="grid-move absolute inset-0 opacity-[0.13] [background-image:linear-gradient(to_right,rgba(255,255,255,0.08)_1px,transparent_1px),linear-gradient(to_bottom,rgba(255,255,255,0.08)_1px,transparent_1px)] [background-size:70px_70px]" />
+        <div
+          className="grid-move absolute inset-0 opacity-[0.13]
+          [background-image:linear-gradient(to_right,rgba(255,255,255,0.08)_1px,transparent_1px),
+          linear-gradient(to_bottom,rgba(255,255,255,0.08)_1px,transparent_1px)]
+          [background-size:70px_70px]"
+        />
         <Particles />
       </div>
 
+      {/* ===== STICKY TOP NAV ===== */}
       <div className="relative z-10 sticky top-0 border-b border-white/10 bg-black/55 backdrop-blur">
         <div className="mx-auto max-w-7xl px-6 py-4 flex items-center justify-between">
           <div className="flex items-center gap-3">
             <div className="h-9 w-9 rounded-xl border border-white/10 bg-white/5 grid place-items-center">
               <span className="text-blue-300 font-bold">S</span>
             </div>
-            <div className="text-lg font-semibold tracking-wide">Star <span className="text-blue-400">Dashboard</span></div>
+            <div className="text-lg font-semibold tracking-wide">
+              Star <span className="text-blue-400">Dashboard</span>
+            </div>
           </div>
+
           <div className="flex items-center gap-2 text-sm">
             <a href="/" className="rounded-xl px-3 py-2">Home</a>
             <a href="/dashboard" className="rounded-xl px-3 py-2">Dashboard</a>
             {loggedIn ? (
-              <a href="/api/auth/logout" className="ml-2 flex items-center gap-2 rounded-xl bg-zinc-800 px-4 py-2 font-semibold text-white border border-white/10">↩ Sign out</a>
+              <a href="/api/auth/logout" className="ml-2 flex items-center gap-2 rounded-xl bg-zinc-800 px-4 py-2 font-semibold text-white hover:bg-zinc-700 transition border border-white/10">↩ Sign out</a>
             ) : (
-              <a href="/api/auth/login" className="ml-2 flex items-center gap-2 rounded-xl bg-indigo-500 px-4 py-2 font-semibold text-white">→ Discord login</a>
+              <a href="/api/auth/login" className="ml-2 flex items-center gap-2 rounded-xl bg-indigo-500 px-4 py-2 font-semibold text-white hover:opacity-90 transition shadow-[0_15px_60px_rgba(99,102,241,0.35)]">→ Discord login</a>
             )}
           </div>
         </div>
       </div>
 
+      {/* ===== LAYOUT ===== */}
       <div className="relative z-10 mx-auto max-w-7xl px-6 py-8 grid gap-6 md:grid-cols-[240px_1fr]">
         <aside className="rounded-2xl border border-white/10 bg-[#0f141b]/75 backdrop-blur p-4 h-fit shadow-[0_30px_120px_rgba(0,0,0,0.45)]">
           <div className="text-xs tracking-widest text-white/40 px-3 pb-3">MENU</div>
           <SidebarItem label="Dashboard" icon={<GridIcon />} active />
           <SidebarItem label="My Pins" icon={<PinIcon />} />
           <SidebarItem label="Simulate Trinity" icon={<PinIcon />} />
+          <div className="mt-4 pt-4 border-t border-white/10">
+            <a href="https://discord.gg/rHy3W7Za" target="_blank" rel="noreferrer" className="flex items-center gap-3 rounded-xl px-4 py-3 text-white/70 hover:text-white hover:bg-white/5 border border-white/10 transition">
+              <SupportIcon /> Discord Support
+            </a>
+          </div>
         </aside>
 
         <section>
@@ -120,10 +136,23 @@ export default function DashboardPage() {
               <h1 className="text-3xl font-bold">My Pins</h1>
               <p className="mt-1 text-white/60">Generate pins, track status, and view results.</p>
             </div>
-            <button onClick={generatePin} disabled={loading} className="rounded-xl bg-blue-500 px-5 py-2 font-semibold text-black">
+            <button onClick={generatePin} disabled={loading} className="rounded-xl bg-blue-500 px-5 py-2 font-semibold text-black hover:opacity-90 disabled:opacity-50 transition shadow-[0_20px_70px_rgba(16,185,129,0.12)]">
               {loading ? "Creating..." : "+ Create Pin"}
             </button>
           </div>
+
+          {latest && (
+            <div className="mt-6 rounded-2xl border border-blue-500/30 bg-blue-500/10 p-5 backdrop-blur shadow-[0_30px_120px_rgba(16,185,129,0.06)]">
+              <div className="text-sm text-white/80 mb-2">Latest PIN — share this with the person being checked:</div>
+              <div className="flex items-center gap-4 flex-wrap">
+                <div className="text-2xl font-mono tracking-widest text-blue-300">{latest.pin}</div>
+                <button onClick={() => copy(latest.pin)} className="rounded-lg bg-black/40 px-4 py-2 text-sm hover:bg-black/60 border border-white/10 transition">
+                  {copied ? "Copied ✅" : "Copy"}
+                </button>
+                <span className="text-xs text-white/50">Created {new Date(latest.createdAt).toLocaleString()}</span>
+              </div>
+            </div>
+          )}
 
           <div className="mt-6 grid gap-4 sm:grid-cols-3">
             <StatPremium label="Total Pins" value={stats.total} />
@@ -137,7 +166,6 @@ export default function DashboardPage() {
               <button onClick={loadPins} className="rounded-lg bg-black/40 px-4 py-2 text-sm border border-white/10">Refresh</button>
             </div>
 
-            {/* HEADER - Kept 4 columns */}
             <div className="grid grid-cols-4 text-sm text-white/50 pb-3 border-b border-white/10">
               <div>Pin</div>
               <div>Status</div>
@@ -154,12 +182,11 @@ export default function DashboardPage() {
                     <div className="font-mono tracking-widest text-blue-300">{p.pin}</div>
                     <div>{p.hasResults ? <Badge tone="good">Finished</Badge> : <Badge tone="neutral">Pending</Badge>}</div>
                     <div className="text-white/55">{new Date(p.createdAt).toLocaleTimeString()}</div>
-                    {/* BUTTON ALIGNED WITHIN THE COLUMN */}
                     <div>
                       {p.hasResults ? (
                         <button className="results-btn" onClick={() => openResults(p)}>Results</button>
                       ) : (
-                        "—"
+                        <span className="text-white/20">—</span>
                       )}
                     </div>
                   </div>
@@ -188,29 +215,41 @@ export default function DashboardPage() {
   );
 }
 
-// Sub-components...
+// ... Rest of your UI Components (Particles, SidebarItem, Icons) exactly as you had them ...
 function SidebarItem({ label, icon, active }: { label: string; icon?: React.ReactNode; active?: boolean }) {
   return (
-    <div className={`mb-2 rounded-xl px-4 py-3 font-semibold cursor-pointer border transition flex items-center gap-3 ${active ? "bg-blue-500/15 border-blue-500/30 text-blue-200" : "bg-transparent border-white/10 text-white/70"}`}>
+    <div className={["mb-2 rounded-xl px-4 py-3 font-semibold cursor-pointer border transition flex items-center gap-3", active ? "bg-blue-500/15 border-blue-500/30 text-blue-200 shadow-[0_25px_80px_rgba(16,185,129,0.12)]" : "bg-transparent border-white/10 text-white/70 hover:bg-white/5 hover:text-white"].join(" ")}>
       <span className="text-blue-300">{icon}</span> {label}
     </div>
   );
 }
+
 function StatPremium({ label, value }: { label: string; value: number }) {
   return (
-    <div className="rounded-2xl border border-white/10 bg-[#0f141b]/75 p-5 shadow-[0_30px_120px_rgba(0,0,0,0.45)]">
+    <div className="rounded-2xl border border-white/10 bg-[#0f141b]/75 backdrop-blur p-5 hover:-translate-y-0.5 transition shadow-[0_30px_120px_rgba(0,0,0,0.45)]">
       <div className="text-sm text-white/60">{label}</div>
       <div className="mt-1 text-2xl font-bold text-blue-200">{value}</div>
+      <div className="mt-3 h-1 rounded-full bg-white/10 overflow-hidden"><div className="h-full w-2/3 bg-blue-500/40" /></div>
     </div>
   );
 }
+
 function Badge({ tone, children }: { tone: "good" | "neutral"; children: React.ReactNode }) {
   const cls = tone === "good" ? "border-blue-500/30 bg-blue-500/10 text-blue-200" : "border-white/15 bg-white/5 text-white/75";
-  return <span className={`inline-flex items-center rounded-full border px-3 py-1 text-xs font-semibold ${cls}`}>{children}</span>;
+  return <span className={["inline-flex items-center rounded-full border px-3 py-1 text-xs font-semibold", cls].join(" ")}>{children}</span>;
 }
+
 function Particles() {
-  return <div className="absolute inset-0 opacity-20"><div className="absolute top-10 left-10 w-2 h-2 bg-white rounded-full blur-sm animate-pulse" /></div>;
+  const dots = Array.from({ length: 44 }, (_, i) => i);
+  return (
+    <div className="absolute inset-0">
+      {dots.map((i) => (
+        <span key={i} className="absolute rounded-full bg-blue-200/30 blur-[0.3px] animate-float" style={{ width: `${2 + (i % 3)}px`, height: `${2 + (i % 3)}px`, left: `${(i * 97) % 100}%`, top: `${(i * 53) % 100}%`, animationDelay: `${(i % 10) * 0.35}s`, opacity: 0.2 + (i % 5) * 0.12 }} />
+      ))}
+    </div>
+  );
 }
-function GridIcon() { return <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>; }
-function PinIcon() { return <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>; }
-function SupportIcon() { return <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>; }
+
+function GridIcon() { return <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M4 4h7v7H4V4zm9 0h7v7h-7V4zM4 13h7v7H4v-7zm9 0h7v7h-7v-7z" stroke="currentColor" strokeWidth="2" /></svg>; }
+function PinIcon() { return <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M12 22s7-5 7-12a7 7 0 10-14 0c0 7 7 12 7 12z" stroke="currentColor" strokeWidth="2" /><circle cx="12" cy="10" r="2" stroke="currentColor" strokeWidth="2" /></svg>; }
+function SupportIcon() { return <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M4 12a8 8 0 0116 0v7a2 2 0 01-2 2h-2" stroke="currentColor" strokeWidth="2" strokeLinecap="round" /><path d="M4 12v5a2 2 0 002 2h2v-7H6a2 2 0 00-2 2z" stroke="currentColor" strokeWidth="2" /><path d="M20 12v5a2 2 0 01-2 2h-2v-7h2a2 2 0 012 2z" stroke="currentColor" strokeWidth="2" /></svg>; }
