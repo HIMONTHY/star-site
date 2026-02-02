@@ -1,17 +1,78 @@
+@import "tailwindcss";
+
+/* 1. Global Variables & Base Styles */
+:root {
+  --background: #0a0a0a;
+  --foreground: #ededed;
+  --accent-blue: #2f81f7;
+  --accent-green: #1eb673;
+  --card-bg: #0b0e14;
+  --border-color: #1d2636;
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: ui-sans-serif, system-ui, -apple-system, sans-serif;
+  margin: 0;
+}
+
+/* 2. Background & Global Animations */
+@keyframes floaty {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-12px); }
+}
+
+@keyframes glowMove {
+  0%, 100% { transform: translate(-50%, -40%) scale(1); }
+  50% { transform: translate(-45%, -55%) scale(1.12); }
+}
+
+@keyframes gridMove {
+  from { background-position: 0 0; }
+  to { background-position: 140px 140px; }
+}
+
+.animate-float { animation: floaty 7s ease-in-out infinite !important; }
+.grid-move     { animation: gridMove 35s linear infinite !important; }
+
+.glow-blob {
+  position: absolute;
+  left: 50%;
+  top: -240px;
+  width: 900px;
+  height: 700px;
+  border-radius: 9999px;
+  background: rgba(59, 130, 246, 0.15);
+  filter: blur(120px);
+  animation: glowMove 18s ease-in-out infinite !important;
+  pointer-events: none; /* Prevents the blob from blocking clicks */
+}
+
+/* 3. Layout Utilities */
+.center {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 70vh;
+}
+
+/* 4. Trinity Layout (Sidebar + Main) */
 .trinity-wrapper {
   display: flex;
   gap: 28px;
   max-width: 1200px;
   margin: 70px auto;
-  color: white;
+  padding: 0 20px;
 }
 
 .trinity-sidebar {
   width: 240px;
-  background: #0b0e14;
-  border: 1px solid #1d2636;
+  background: var(--card-bg);
+  border: 1px solid var(--border-color);
   border-radius: 18px;
   padding: 14px;
+  height: fit-content;
 }
 
 .side-item {
@@ -20,15 +81,13 @@
   color: #7a8aa0;
   cursor: pointer;
   margin-bottom: 8px;
+  transition: background 0.2s;
 }
 
-.side-item:hover {
-  background: #111827;
-}
-
+.side-item:hover { background: #111827; }
 .side-item.active {
-  background: #162a22;
-  color: #1eb673;
+  background: rgba(30, 182, 115, 0.15);
+  color: var(--accent-green);
 }
 
 .trinity-main {
@@ -38,18 +97,16 @@
   gap: 20px;
 }
 
-.trinity-card {
-  background: #0b0e14;
-  border: 1px solid #1d2636;
+/* 5. Cards & Results */
+.trinity-card, .result-card {
+  background: var(--card-bg);
+  border: 1px solid var(--border-color);
   border-radius: 18px;
   padding: 18px;
+  transition: border-color 0.2s;
 }
 
-.trinity-card h3 {
-  color: #1eb673;
-  font-size: 20px;
-  margin-bottom: 12px;
-}
+.result-card:hover { border-color: var(--accent-blue); }
 
 .card-body {
   background: #111827;
@@ -58,16 +115,10 @@
   padding: 14px;
 }
 
-.card-body pre {
+pre {
+  font-family: ui-monospace, SFMono-Regular, monospace;
+  font-size: 14px;
   color: #cfd8dc;
   white-space: pre-wrap;
-  font-size: 14px;
-}
-
-.center {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  height: 70vh;
-  color: white;
+  margin: 0;
 }
