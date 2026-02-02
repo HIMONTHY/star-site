@@ -1,116 +1,174 @@
 "use client";
 
-import { useParams } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
+import { LayoutGrid, Key, Shield, Search, Info, ChevronLeft } from "lucide-react";
 
 export default function ResultsPage() {
   const { id } = useParams();
+  const router = useRouter();
   const [results, setResults] = useState<any>(null);
-  const [active, setActive] = useState("accounts");
+  const [activeTab, setActiveTab] = useState("accounts");
 
   useEffect(() => {
     async function load() {
-      const res = await fetch(`/api/results?id=${id}`);
-      const data = await res.json();
-      setResults(data.results);
+      try {
+        const res = await fetch(`/api/results?id=${id}`);
+        const data = await res.json();
+        setResults(data.results);
+      } catch (err) {
+        console.error("Failed to load results", err);
+      }
     }
     load();
   }, [id]);
 
   if (!results) {
-    return <div className="center">Loading scan results...</div>;
+    return <div className="flex items-center justify-center h-screen text-gray-500">Loading scan results...</div>;
   }
 
   return (
-    <div className="trinity-wrapper">
+    <div className="flex gap-8 max-w-[1200px] mx-auto py-12 px-6">
+      
+      {/* 1. LEFT NAVIGATION SIDEBAR */}
+      <aside className="w-60 flex flex-col gap-2">
+        <div className="bg-[#111418] border border-[#1f242c] rounded-xl p-4">
+          <div className="flex items-center gap-3 p-3 bg-[#1c2128] text-white rounded-lg cursor-pointer">
+            <LayoutGrid size={18} className="text-[#2ea043]" />
+            <span className="text-sm font-medium">Dashboard</span>
+          </div>
+          <div className="flex items-center gap-3 p-3 text-gray-400 hover:text-white transition cursor-pointer">
+            <Key size={18} />
+            <span className="text-sm font-medium">My Pins</span>
+          </div>
+        </div>
+      </aside>
 
-      <div className="trinity-sidebar">
-
-        <div 
-          className={`side-item ${active==="accounts" ? "active" : ""}`}
-          onClick={() => setActive("accounts")}
-        >
-          Roblox Accounts
+      {/* 2. MAIN CONTENT AREA */}
+      <main className="flex-1">
+        
+        {/* Header Section */}
+        <div className="mb-8">
+          <button 
+            onClick={() => router.back()}
+            className="flex items-center gap-1 text-xs text-gray-500 hover:text-white mb-4 transition"
+          >
+            <ChevronLeft size={14} /> My Pins
+          </button>
+          <h1 className="text-3xl font-bold text-white mb-1">Scan results</h1>
+          <p className="text-xs text-gray-500">Submitted Jan 31, 2026, 7:21 PM</p>
         </div>
 
-        <div 
-          className={`side-item ${active==="security" ? "active" : ""}`}
-          onClick={() => setActive("security")}
-        >
-          System Security
+        <div className="flex gap-10">
+          
+          {/* Sub-Navigation (Category Switcher) */}
+          <div className="w-56 flex flex-col gap-1">
+            <TabItem 
+              label="Roblox Accounts" 
+              icon={<Shield size={18} />} 
+              isActive={activeTab === "accounts"} 
+              onClick={() => setActiveTab("accounts")} 
+            />
+            <TabItem 
+              label="System Security" 
+              icon={<Shield size={18} />} 
+              isActive={activeTab === "security"} 
+              onClick={() => setActiveTab("security")} 
+            />
+            <TabItem 
+              label="System Analysis" 
+              icon={<Search size={18} />} 
+              isActive={activeTab === "analysis"} 
+              onClick={() => setActiveTab("analysis")} 
+            />
+            <TabItem 
+              label="Additional Details" 
+              icon={<Info size={18} />} 
+              isActive={activeTab === "details"} 
+              onClick={() => setActiveTab("details")} 
+            />
+          </div>
+
+          {/* Result Cards Display */}
+          <div className="flex-1 space-y-6">
+            {activeTab === "accounts" && (
+              <ResultCard title="Roblox Accounts" icon={<Shield size={20} />}>
+                <div className="flex items-center gap-4">
+                  <div className="w-12 h-12 bg-gray-800 rounded-lg flex-shrink-0 bg-gradient-to-br from-gray-700 to-black border border-gray-700" />
+                  <div>
+                    <p className="text-[#2ea043] font-bold text-sm leading-tight">
+                      {results.robloxAccount?.username || "Unknown"}
+                    </p>
+                    <p className="text-[10px] text-gray-500 break-all mt-1">
+                      {results.robloxAccount?.profile}
+                    </p>
+                  </div>
+                </div>
+              </ResultCard>
+            )}
+
+            {activeTab === "security" && (
+              <>
+                <ResultCard title="Roblox Logs (Flags)" icon={<Shield size={20} />}>
+                  <pre className="text-[12px] leading-relaxed text-gray-300 font-mono whitespace-pre-wrap">
+                    {results.robloxLogs || "No flags found."}
+                  </pre>
+                </ResultCard>
+                <ResultCard title="Factory Reset Information" icon={<Shield size={20} />}>
+                  <pre className="text-[12px] text-gray-300 font-mono">{results.factoryReset}</pre>
+                </ResultCard>
+              </>
+            )}
+
+            {activeTab === "analysis" && (
+              <ResultCard title="Cheat Scan" icon={<Search size={20} />}>
+                <pre className="text-[12px] text-gray-300 font-mono">{results.cheatScan}</pre>
+              </ResultCard>
+            )}
+            
+            {activeTab === "details" && (
+              <ResultCard title="Additional Details" icon={<Info size={20} />}>
+                <pre className="text-[12px] text-gray-300 font-mono">{results.unsignedExecutables}</pre>
+              </ResultCard>
+            )}
+          </div>
+
         </div>
-
-        <div 
-          className={`side-item ${active==="analysis" ? "active" : ""}`}
-          onClick={() => setActive("analysis")}
-        >
-          System Analysis
-        </div>
-
-        <div 
-          className={`side-item ${active==="details" ? "active" : ""}`}
-          onClick={() => setActive("details")}
-        >
-          Additional Details
-        </div>
-
-      </div>
-
-      <div className="trinity-main">
-
-        {active === "accounts" && (
-          <ResultCard title="Roblox Accounts">
-            <p><strong>{results.robloxAccount?.username}</strong></p>
-            <a href={results.robloxAccount?.profile} target="_blank">
-              {results.robloxAccount?.profile}
-            </a>
-          </ResultCard>
-        )}
-
-        {active === "security" && (
-          <>
-            <ResultCard title="Roblox Logs (Flags)">
-              <pre>{results.robloxLogs}</pre>
-            </ResultCard>
-
-            <ResultCard title="Factory Reset Information">
-              <pre>{results.factoryReset}</pre>
-            </ResultCard>
-
-            <ResultCard title="Services">
-              <pre>{results.services}</pre>
-            </ResultCard>
-          </>
-        )}
-
-        {active === "analysis" && (
-          <>
-            <ResultCard title="Cheat Scan">
-              <pre>{results.cheatScan}</pre>
-            </ResultCard>
-
-            <ResultCard title="Advanced Scan">
-              <pre>{results.advancedScan}</pre>
-            </ResultCard>
-          </>
-        )}
-
-        {active === "details" && (
-          <ResultCard title="Unsigned Executables">
-            <pre>{results.unsignedExecutables}</pre>
-          </ResultCard>
-        )}
-
-      </div>
+      </main>
     </div>
   );
 }
 
-function ResultCard({ title, children }: any) {
+/* Helper Component for Sidebar Tabs */
+function TabItem({ label, icon, isActive, onClick }: any) {
   return (
-    <div className="trinity-card">
-      <h3>{title}</h3>
-      <div className="card-body">{children}</div>
+    <div 
+      onClick={onClick}
+      className={`flex items-center gap-3 p-3 rounded-lg cursor-pointer transition-all border border-transparent ${
+        isActive 
+        ? "bg-[#1c2128]/50 text-[#2ea043] border-[#238636]/20" 
+        : "text-gray-400 hover:text-white hover:bg-[#161b22]"
+      }`}
+    >
+      {icon}
+      <span className="text-sm font-medium">{label}</span>
+    </div>
+  );
+}
+
+/* Helper Component for Result Cards */
+function ResultCard({ title, icon, children }: any) {
+  return (
+    <div className="bg-[#111418] border border-[#1f242c] rounded-xl p-6">
+      <div className="flex items-center gap-3 mb-5">
+        <div className="bg-[#238636]/10 text-[#238636] p-2 rounded-lg">
+          {icon}
+        </div>
+        <h3 className="text-white font-semibold text-base">{title}</h3>
+      </div>
+      <div className="bg-[#0b0d10] border border-[#1f242c] rounded-lg p-4">
+        {children}
+      </div>
     </div>
   );
 }
