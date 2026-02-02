@@ -1,124 +1,106 @@
 @import "tailwindcss";
 
-/* 1. Global Variables & Base Styles */
 :root {
-  --background: #0a0a0a;
-  --foreground: #ededed;
-  --accent-blue: #2f81f7;
-  --accent-green: #1eb673;
-  --card-bg: #0b0e14;
-  --border-color: #1d2636;
+  --background: #060709;
+  --card-bg: #111418;
+  --inner-bg: #0b0d10;
+  --border: #1f242c;
+  --accent-green: #238636;
+  --text-muted: #8B949E;
 }
 
 body {
   background: var(--background);
-  color: var(--foreground);
-  font-family: ui-sans-serif, system-ui, -apple-system, sans-serif;
-  margin: 0;
+  color: #ffffff;
+  font-family: 'Inter', sans-serif;
 }
 
-/* 2. Background & Global Animations */
-@keyframes floaty {
-  0%, 100% { transform: translateY(0px); }
-  50% { transform: translateY(-12px); }
-}
-
-@keyframes glowMove {
-  0%, 100% { transform: translate(-50%, -40%) scale(1); }
-  50% { transform: translate(-45%, -55%) scale(1.12); }
-}
-
-@keyframes gridMove {
-  from { background-position: 0 0; }
-  to { background-position: 140px 140px; }
-}
-
-.animate-float { animation: floaty 7s ease-in-out infinite !important; }
-.grid-move     { animation: gridMove 35s linear infinite !important; }
-
-.glow-blob {
-  position: absolute;
-  left: 50%;
-  top: -240px;
-  width: 900px;
-  height: 700px;
-  border-radius: 9999px;
-  background: rgba(59, 130, 246, 0.15);
-  filter: blur(120px);
-  animation: glowMove 18s ease-in-out infinite !important;
-  pointer-events: none; /* Prevents the blob from blocking clicks */
-}
-
-/* 3. Layout Utilities */
-.center {
+/* Layout Containers */
+.trinity-layout {
   display: flex;
-  justify-content: center;
-  align-items: center;
-  min-height: 70vh;
-}
-
-/* 4. Trinity Layout (Sidebar + Main) */
-.trinity-wrapper {
-  display: flex;
-  gap: 28px;
+  gap: 24px;
   max-width: 1200px;
-  margin: 70px auto;
+  margin: 40px auto;
   padding: 0 20px;
 }
 
-.trinity-sidebar {
-  width: 240px;
+/* Sidebar Styling */
+.sidebar {
+  width: 260px;
   background: var(--card-bg);
-  border: 1px solid var(--border-color);
-  border-radius: 18px;
-  padding: 14px;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 16px;
   height: fit-content;
 }
 
-.side-item {
-  padding: 12px 14px;
-  border-radius: 12px;
-  color: #7a8aa0;
-  cursor: pointer;
-  margin-bottom: 8px;
-  transition: background 0.2s;
-}
-
-.side-item:hover { background: #111827; }
-.side-item.active {
-  background: rgba(30, 182, 115, 0.15);
-  color: var(--accent-green);
-}
-
-.trinity-main {
-  flex: 1;
+.nav-item {
   display: flex;
-  flex-direction: column;
-  gap: 20px;
-}
-
-/* 5. Cards & Results */
-.trinity-card, .result-card {
-  background: var(--card-bg);
-  border: 1px solid var(--border-color);
-  border-radius: 18px;
-  padding: 18px;
-  transition: border-color 0.2s;
-}
-
-.result-card:hover { border-color: var(--accent-blue); }
-
-.card-body {
-  background: #111827;
-  border: 1px solid #2b3446;
-  border-radius: 14px;
-  padding: 14px;
-}
-
-pre {
-  font-family: ui-monospace, SFMono-Regular, monospace;
+  align-items: center;
+  gap: 12px;
+  padding: 12px;
+  border-radius: 8px;
+  color: var(--text-muted);
   font-size: 14px;
-  color: #cfd8dc;
-  white-space: pre-wrap;
-  margin: 0;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.nav-item.active {
+  background: #1c2128;
+  color: white;
+}
+
+.nav-item:hover:not(.active) {
+  background: #161b22;
+}
+
+/* Result Cards */
+.scan-card {
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 24px;
+  margin-bottom: 20px;
+}
+
+.card-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.icon-box {
+  background: rgba(35, 134, 54, 0.1);
+  color: var(--accent-green);
+  padding: 8px;
+  border-radius: 8px;
+}
+
+.inner-box {
+  background: var(--inner-bg);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 16px;
+}
+
+/* Typography */
+.scan-title {
+  font-size: 24px;
+  font-weight: 700;
+  margin-bottom: 4px;
+}
+
+.timestamp {
+  color: var(--text-muted);
+  font-size: 13px;
+  margin-bottom: 20px;
+}
+
+.log-font {
+  font-family: 'ui-monospace', monospace;
+  font-size: 13px;
+  color: #cbd5e1;
+  line-height: 1.6;
 }
