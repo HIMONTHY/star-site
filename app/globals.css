@@ -1,22 +1,8 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
-
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+  --background: #0a0a0a;
+  --foreground: #ededed;
 }
 
 body {
@@ -26,26 +12,20 @@ body {
 }
 
 /* ============================
-   BACKGROUND ANIMATIONS (WORKING)
+   BACKGROUND ANIMATIONS
 ============================ */
-
-/* Floating particles */
 @keyframes floaty {
-  0% { transform: translateY(0px); }
+  0%, 100% { transform: translateY(0px); }
   50% { transform: translateY(-12px); }
-  100% { transform: translateY(0px); }
 }
 .animate-float {
   animation: floaty 7s ease-in-out infinite !important;
 }
 
-/* Glow drift (use a dedicated class so transforms don’t conflict) */
 @keyframes glowMove {
-  0%   { transform: translate(-50%, -40%) scale(1); }
-  50%  { transform: translate(-45%, -55%) scale(1.12); }
-  100% { transform: translate(-50%, -40%) scale(1); }
+  0%, 100% { transform: translate(-50%, -40%) scale(1); }
+  50% { transform: translate(-45%, -55%) scale(1.12); }
 }
-
 .glow-blob {
   position: absolute;
   left: 50%;
@@ -58,11 +38,85 @@ body {
   animation: glowMove 18s ease-in-out infinite !important;
 }
 
-/* Grid slow scroll */
 @keyframes gridMove {
   from { background-position: 0 0; }
   to { background-position: 140px 140px; }
 }
 .grid-move {
   animation: gridMove 35s linear infinite !important;
+}
+
+/* ============================
+   TRINITY MODAL & BUTTONS
+============================ */
+.results-btn {
+  padding: 6px 14px;
+  border-radius: 10px;
+  background: #111827;
+  border: 1px solid #2b3446;
+  color: #2f81f7;
+  cursor: pointer;
+  font-size: 0.75rem;
+  font-weight: 600;
+  transition: all 0.2s;
+}
+
+.results-btn:hover {
+  background: #1a2232;
+  border-color: #3d495d;
+}
+
+.results-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  background: rgba(0, 0, 0, 0.75);
+  backdrop-filter: blur(4px);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 20px;
+}
+
+.results-modal {
+  width: 100%;
+  max-width: 600px;
+  max-height: 80vh;
+  background: #0b0e14;
+  border: 1px solid #1d2636;
+  border-radius: 16px;
+  padding: 24px;
+  color: white;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.results-modal h2 {
+  font-size: 1.25rem;
+  margin-bottom: 1rem;
+  color: #2f81f7;
+}
+
+.results-modal pre {
+  background: #05070a;
+  padding: 15px;
+  border-radius: 8px;
+  font-family: ui-monospace, monospace;
+  font-size: 12px;
+  color: #cbd5e1;
+  overflow: auto;
+  white-space: pre-wrap;
+  border: 1px solid #1d2636;
+}
+
+.close-btn-modal {
+  margin-top: 1rem;
+  padding: 8px 20px;
+  background: #1f2937;
+  border-radius: 8px;
+  border: 1px solid #374151;
+  color: white;
+  cursor: pointer;
+  align-self: flex-end;
 }
