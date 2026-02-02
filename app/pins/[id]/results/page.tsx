@@ -3,29 +3,16 @@
 import { useParams } from "next/navigation";
 import { useEffect, useState } from "react";
 
-type Results = {
-  robloxAccount?: {
-    username: string;
-    profile: string;
-  };
-  robloxLogs?: string;
-  factoryReset?: string;
-  services?: string;
-  cheatScan?: string;
-  advancedScan?: string;
-  unsignedExecutables?: string;
-};
-
 export default function ResultsPage() {
   const { id } = useParams();
-  const [results, setResults] = useState<Results | null>(null);
+  const [results, setResults] = useState<any>(null);
   const [active, setActive] = useState("accounts");
 
   useEffect(() => {
     async function load() {
       const res = await fetch(`/api/results?id=${id}`);
       const data = await res.json();
-      setResults(data.results || null);
+      setResults(data.results);
     }
     load();
   }, [id]);
@@ -35,73 +22,83 @@ export default function ResultsPage() {
   }
 
   return (
-    <div className="trinity-layout">
+    <div className="trinity-wrapper">
 
-      {/* SIDEBAR */}
       <div className="trinity-sidebar">
 
-        <button onClick={() => setActive("accounts")} className={active==="accounts" ? "active" : ""}>
+        <div 
+          className={`side-item ${active==="accounts" ? "active" : ""}`}
+          onClick={() => setActive("accounts")}
+        >
           Roblox Accounts
-        </button>
+        </div>
 
-        <button onClick={() => setActive("security")} className={active==="security" ? "active" : ""}>
+        <div 
+          className={`side-item ${active==="security" ? "active" : ""}`}
+          onClick={() => setActive("security")}
+        >
           System Security
-        </button>
+        </div>
 
-        <button onClick={() => setActive("analysis")} className={active==="analysis" ? "active" : ""}>
+        <div 
+          className={`side-item ${active==="analysis" ? "active" : ""}`}
+          onClick={() => setActive("analysis")}
+        >
           System Analysis
-        </button>
+        </div>
 
-        <button onClick={() => setActive("details")} className={active==="details" ? "active" : ""}>
+        <div 
+          className={`side-item ${active==="details" ? "active" : ""}`}
+          onClick={() => setActive("details")}
+        >
           Additional Details
-        </button>
+        </div>
 
       </div>
 
-      {/* CONTENT */}
-      <div className="trinity-content">
+      <div className="trinity-main">
 
         {active === "accounts" && (
-          <Card title="Roblox Accounts">
-            <p><b>{results.robloxAccount?.username}</b></p>
+          <ResultCard title="Roblox Accounts">
+            <p><strong>{results.robloxAccount?.username}</strong></p>
             <a href={results.robloxAccount?.profile} target="_blank">
               {results.robloxAccount?.profile}
             </a>
-          </Card>
+          </ResultCard>
         )}
 
         {active === "security" && (
           <>
-            <Card title="Roblox Logs (Flags)">
+            <ResultCard title="Roblox Logs (Flags)">
               <pre>{results.robloxLogs}</pre>
-            </Card>
+            </ResultCard>
 
-            <Card title="Factory Reset Information">
+            <ResultCard title="Factory Reset Information">
               <pre>{results.factoryReset}</pre>
-            </Card>
+            </ResultCard>
 
-            <Card title="Services">
+            <ResultCard title="Services">
               <pre>{results.services}</pre>
-            </Card>
+            </ResultCard>
           </>
         )}
 
         {active === "analysis" && (
           <>
-            <Card title="Cheat Scan">
+            <ResultCard title="Cheat Scan">
               <pre>{results.cheatScan}</pre>
-            </Card>
+            </ResultCard>
 
-            <Card title="Advanced Scan">
+            <ResultCard title="Advanced Scan">
               <pre>{results.advancedScan}</pre>
-            </Card>
+            </ResultCard>
           </>
         )}
 
         {active === "details" && (
-          <Card title="Unsigned Executables">
+          <ResultCard title="Unsigned Executables">
             <pre>{results.unsignedExecutables}</pre>
-          </Card>
+          </ResultCard>
         )}
 
       </div>
@@ -109,11 +106,11 @@ export default function ResultsPage() {
   );
 }
 
-function Card({ title, children }: { title: string; children: any }) {
+function ResultCard({ title, children }: any) {
   return (
-    <div className="trinity-panel">
+    <div className="trinity-card">
       <h3>{title}</h3>
-      <div className="panel-body">{children}</div>
+      <div className="card-body">{children}</div>
     </div>
   );
 }
