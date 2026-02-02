@@ -1,80 +1,79 @@
-.trinity-results {
-  max-width: 950px;
-  margin: 70px auto;
-  color: white;
+"use client";
+
+import { useParams } from "next/navigation";
+import { useEffect, useState } from "react";
+
+type Results = {
+  robloxLogs?: string;
+  factoryReset?: string;
+  services?: string;
+  cheatScan?: string;
+  advancedScan?: string;
+  unsignedExecutables?: string;
+};
+
+export default function ResultsPage() {
+  const { id } = useParams();
+  const [results, setResults] = useState<Results | null>(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    async function load() {
+      const res = await fetch(`/api/results?id=${id}`);
+      const data = await res.json();
+      setResults(data.results || null);
+      setLoading(false);
+    }
+    load();
+  }, [id]);
+
+  if (loading) return <Center text="Loading scan results..." />;
+  if (!results) return <Center text="No results found." />;
+
+  return (
+    <div className="trinity-results">
+
+      <h1>Scan Results</h1>
+
+      <Card title="Roblox Logs" value={results.robloxLogs} />
+      <Card title="Factory Reset" value={results.factoryReset} />
+      <Card title="Services" value={results.services} />
+      <Card title="Cheat Scan" value={results.cheatScan} />
+      <Card title="Advanced Scan" value={results.advancedScan} />
+      <Card title="Unsigned Executables" value={results.unsignedExecutables} />
+
+    </div>
+  );
 }
 
-.trinity-results h1 {
-  font-size: 38px;
-  margin-bottom: 26px;
+function Card({ title, value }: { title: string; value?: string }) {
+  const text = value || "No data";
+
+  let status = "clean";
+  if (text.toLowerCase().includes("match") || text.toLowerCase().includes("unsigned"))
+    status = "warning";
+  if (text.toLowerCase().includes("suspicious") || text.toLowerCase().includes("flag"))
+    status = "danger";
+
+  const icon =
+    status === "clean" ? "✔" :
+    status === "warning" ? "⚠" : "❌";
+
+  return (
+    <div className={`trinity-card ${status}`}>
+      <div className="card-header">
+        <span className="icon">{icon}</span>
+        <h3>{title}</h3>
+      </div>
+      <pre>{text}</pre>
+    </div>
+  );
 }
 
-.trinity-card {
-  background: #0b0e14;
-  border: 1px solid #1d2636;
-  border-radius: 18px;
-  padding: 18px 20px;
-  margin-bottom: 18px;
-  transition: all 0.25s ease;
-}
-
-.trinity-card:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 0 20px rgba(47,129,247,0.15);
-}
-
-.card-header {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  margin-bottom: 10px;
-}
-
-.card-header h3 {
-  font-size: 20px;
-}
-
-.icon {
-  font-size: 20px;
-}
-
-/* STATUS COLORS */
-
-.trinity-card.clean {
-  border-color: #1eb673;
-}
-
-.trinity-card.clean .icon {
-  color: #1eb673;
-}
-
-.trinity-card.warning {
-  border-color: #f5c451;
-}
-
-.trinity-card.warning .icon {
-  color: #f5c451;
-}
-
-.trinity-card.danger {
-  border-color: #ff5c5c;
-}
-
-.trinity-card.danger .icon {
-  color: #ff5c5c;
-}
-
-.trinity-card pre {
-  color: #cfd8dc;
-  font-size: 14px;
-  white-space: pre-wrap;
-  margin-top: 6px;
-}
-
-.center {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  height: 70vh;
-  color: white;
+function Center({ text }: { text: string }) {
+  return (
+    <div className="center">
+      <h2>{text}</h2>
+    </div>
+  );
 }
