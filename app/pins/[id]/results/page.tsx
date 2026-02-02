@@ -2,7 +2,6 @@
 
 import { useParams, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
-import { LayoutGrid, Key, Shield, Search, Info, ChevronLeft } from "lucide-react";
 
 export default function ResultsPage() {
   const { id } = useParams();
@@ -28,17 +27,17 @@ export default function ResultsPage() {
   }
 
   return (
-    <div className="flex gap-8 max-w-[1200px] mx-auto py-12 px-6">
+    <div className="flex flex-col md:flex-row gap-8 max-w-[1200px] mx-auto py-12 px-6">
       
       {/* 1. LEFT NAVIGATION SIDEBAR */}
-      <aside className="w-60 flex flex-col gap-2">
+      <aside className="w-full md:w-60 flex flex-col gap-2">
         <div className="bg-[#111418] border border-[#1f242c] rounded-xl p-4">
           <div className="flex items-center gap-3 p-3 bg-[#1c2128] text-white rounded-lg cursor-pointer">
-            <LayoutGrid size={18} className="text-[#2ea043]" />
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#2ea043" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect></svg>
             <span className="text-sm font-medium">Dashboard</span>
           </div>
           <div className="flex items-center gap-3 p-3 text-gray-400 hover:text-white transition cursor-pointer">
-            <Key size={18} />
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 2l-2 2m-7.61 7.61a5.5 5.5 0 1 1-7.778 7.778 5.5 5.5 0 0 1 7.777-7.777zm0 0L15.5 7.5m0 0l3 3L22 7l-3-3-3.5 3.5z"></path></svg>
             <span className="text-sm font-medium">My Pins</span>
           </div>
         </div>
@@ -47,52 +46,48 @@ export default function ResultsPage() {
       {/* 2. MAIN CONTENT AREA */}
       <main className="flex-1">
         
-        {/* Header Section */}
         <div className="mb-8">
           <button 
             onClick={() => router.back()}
             className="flex items-center gap-1 text-xs text-gray-500 hover:text-white mb-4 transition"
           >
-            <ChevronLeft size={14} /> My Pins
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m15 18-6-6 6-6"/></svg>
+            My Pins
           </button>
           <h1 className="text-3xl font-bold text-white mb-1">Scan results</h1>
           <p className="text-xs text-gray-500">Submitted Jan 31, 2026, 7:21 PM</p>
         </div>
 
-        <div className="flex gap-10">
+        <div className="flex flex-col lg:flex-row gap-10">
           
-          {/* Sub-Navigation (Category Switcher) */}
-          <div className="w-56 flex flex-col gap-1">
+          {/* Sub-Navigation */}
+          <div className="w-full lg:w-56 flex flex-col gap-1">
             <TabItem 
               label="Roblox Accounts" 
-              icon={<Shield size={18} />} 
               isActive={activeTab === "accounts"} 
               onClick={() => setActiveTab("accounts")} 
             />
             <TabItem 
               label="System Security" 
-              icon={<Shield size={18} />} 
               isActive={activeTab === "security"} 
               onClick={() => setActiveTab("security")} 
             />
             <TabItem 
               label="System Analysis" 
-              icon={<Search size={18} />} 
               isActive={activeTab === "analysis"} 
               onClick={() => setActiveTab("analysis")} 
             />
             <TabItem 
               label="Additional Details" 
-              icon={<Info size={18} />} 
               isActive={activeTab === "details"} 
               onClick={() => setActiveTab("details")} 
             />
           </div>
 
-          {/* Result Cards Display */}
+          {/* Result Cards */}
           <div className="flex-1 space-y-6">
             {activeTab === "accounts" && (
-              <ResultCard title="Roblox Accounts" icon={<Shield size={20} />}>
+              <ResultCard title="Roblox Accounts">
                 <div className="flex items-center gap-4">
                   <div className="w-12 h-12 bg-gray-800 rounded-lg flex-shrink-0 bg-gradient-to-br from-gray-700 to-black border border-gray-700" />
                   <div>
@@ -109,26 +104,20 @@ export default function ResultsPage() {
 
             {activeTab === "security" && (
               <>
-                <ResultCard title="Roblox Logs (Flags)" icon={<Shield size={20} />}>
+                <ResultCard title="Roblox Logs (Flags)">
                   <pre className="text-[12px] leading-relaxed text-gray-300 font-mono whitespace-pre-wrap">
                     {results.robloxLogs || "No flags found."}
                   </pre>
                 </ResultCard>
-                <ResultCard title="Factory Reset Information" icon={<Shield size={20} />}>
+                <ResultCard title="Factory Reset Information">
                   <pre className="text-[12px] text-gray-300 font-mono">{results.factoryReset}</pre>
                 </ResultCard>
               </>
             )}
 
             {activeTab === "analysis" && (
-              <ResultCard title="Cheat Scan" icon={<Search size={20} />}>
+              <ResultCard title="Cheat Scan">
                 <pre className="text-[12px] text-gray-300 font-mono">{results.cheatScan}</pre>
-              </ResultCard>
-            )}
-            
-            {activeTab === "details" && (
-              <ResultCard title="Additional Details" icon={<Info size={20} />}>
-                <pre className="text-[12px] text-gray-300 font-mono">{results.unsignedExecutables}</pre>
               </ResultCard>
             )}
           </div>
@@ -139,8 +128,7 @@ export default function ResultsPage() {
   );
 }
 
-/* Helper Component for Sidebar Tabs */
-function TabItem({ label, icon, isActive, onClick }: any) {
+function TabItem({ label, isActive, onClick }: any) {
   return (
     <div 
       onClick={onClick}
@@ -150,19 +138,18 @@ function TabItem({ label, icon, isActive, onClick }: any) {
         : "text-gray-400 hover:text-white hover:bg-[#161b22]"
       }`}
     >
-      {icon}
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
       <span className="text-sm font-medium">{label}</span>
     </div>
   );
 }
 
-/* Helper Component for Result Cards */
-function ResultCard({ title, icon, children }: any) {
+function ResultCard({ title, children }: any) {
   return (
     <div className="bg-[#111418] border border-[#1f242c] rounded-xl p-6">
       <div className="flex items-center gap-3 mb-5">
         <div className="bg-[#238636]/10 text-[#238636] p-2 rounded-lg">
-          {icon}
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
         </div>
         <h3 className="text-white font-semibold text-base">{title}</h3>
       </div>
