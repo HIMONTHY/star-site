@@ -219,7 +219,7 @@ export default function DashboardPage() {
               <div>Pin</div>
               <div>Status</div>
               <div>Created</div>
-              <div>Action</div>
+              <div>Results</div>
             </div>
 
             <div className="divide-y divide-white/10">
