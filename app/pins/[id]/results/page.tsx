@@ -4,6 +4,10 @@ import { useParams } from "next/navigation";
 import { useEffect, useState } from "react";
 
 type Results = {
+  robloxAccount?: {
+    username: string;
+    profile: string;
+  };
   robloxLogs?: string;
   factoryReset?: string;
   services?: string;
@@ -15,65 +19,101 @@ type Results = {
 export default function ResultsPage() {
   const { id } = useParams();
   const [results, setResults] = useState<Results | null>(null);
-  const [loading, setLoading] = useState(true);
+  const [active, setActive] = useState("accounts");
 
   useEffect(() => {
     async function load() {
       const res = await fetch(`/api/results?id=${id}`);
       const data = await res.json();
       setResults(data.results || null);
-      setLoading(false);
     }
     load();
   }, [id]);
 
-  if (loading) return <Center text="Loading scan results..." />;
-  if (!results) return <Center text="No results found." />;
+  if (!results) {
+    return <div className="center">Loading scan results...</div>;
+  }
 
   return (
-    <div className="trinity-results">
+    <div className="trinity-layout">
 
-      <h1>Scan Results</h1>
+      {/* SIDEBAR */}
+      <div className="trinity-sidebar">
 
-      <Card title="Roblox Logs" value={results.robloxLogs} />
-      <Card title="Factory Reset" value={results.factoryReset} />
-      <Card title="Services" value={results.services} />
-      <Card title="Cheat Scan" value={results.cheatScan} />
-      <Card title="Advanced Scan" value={results.advancedScan} />
-      <Card title="Unsigned Executables" value={results.unsignedExecutables} />
+        <button onClick={() => setActive("accounts")} className={active==="accounts" ? "active" : ""}>
+          Roblox Accounts
+        </button>
 
-    </div>
-  );
-}
+        <button onClick={() => setActive("security")} className={active==="security" ? "active" : ""}>
+          System Security
+        </button>
 
-function Card({ title, value }: { title: string; value?: string }) {
-  const text = value || "No data";
+        <button onClick={() => setActive("analysis")} className={active==="analysis" ? "active" : ""}>
+          System Analysis
+        </button>
 
-  let status = "clean";
-  if (text.toLowerCase().includes("match") || text.toLowerCase().includes("unsigned"))
-    status = "warning";
-  if (text.toLowerCase().includes("suspicious") || text.toLowerCase().includes("flag"))
-    status = "danger";
+        <button onClick={() => setActive("details")} className={active==="details" ? "active" : ""}>
+          Additional Details
+        </button>
 
-  const icon =
-    status === "clean" ? "✔" :
-    status === "warning" ? "⚠" : "❌";
-
-  return (
-    <div className={`trinity-card ${status}`}>
-      <div className="card-header">
-        <span className="icon">{icon}</span>
-        <h3>{title}</h3>
       </div>
-      <pre>{text}</pre>
+
+      {/* CONTENT */}
+      <div className="trinity-content">
+
+        {active === "accounts" && (
+          <Card title="Roblox Accounts">
+            <p><b>{results.robloxAccount?.username}</b></p>
+            <a href={results.robloxAccount?.profile} target="_blank">
+              {results.robloxAccount?.profile}
+            </a>
+          </Card>
+        )}
+
+        {active === "security" && (
+          <>
+            <Card title="Roblox Logs (Flags)">
+              <pre>{results.robloxLogs}</pre>
+            </Card>
+
+            <Card title="Factory Reset Information">
+              <pre>{results.factoryReset}</pre>
+            </Card>
+
+            <Card title="Services">
+              <pre>{results.services}</pre>
+            </Card>
+          </>
+        )}
+
+        {active === "analysis" && (
+          <>
+            <Card title="Cheat Scan">
+              <pre>{results.cheatScan}</pre>
+            </Card>
+
+            <Card title="Advanced Scan">
+              <pre>{results.advancedScan}</pre>
+            </Card>
+          </>
+        )}
+
+        {active === "details" && (
+          <Card title="Unsigned Executables">
+            <pre>{results.unsignedExecutables}</pre>
+          </Card>
+        )}
+
+      </div>
     </div>
   );
 }
 
-function Center({ text }: { text: string }) {
+function Card({ title, children }: { title: string; children: any }) {
   return (
-    <div className="center">
-      <h2>{text}</h2>
+    <div className="trinity-panel">
+      <h3>{title}</h3>
+      <div className="panel-body">{children}</div>
     </div>
   );
 }
