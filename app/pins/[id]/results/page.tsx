@@ -1,73 +1,80 @@
-"use client";
-
-import { useParams } from "next/navigation";
-import { useEffect, useState } from "react";
-
-type ResultsData = {
-  robloxLogs?: string;
-  factoryReset?: string;
-  services?: string;
-  cheatScan?: string;
-  advancedScan?: string;
-  unsignedExecutables?: string;
-};
-
-export default function ResultsPage() {
-  const { id } = useParams();
-  const [results, setResults] = useState<ResultsData | null>(null);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    async function fetchResults() {
-      try {
-        const res = await fetch(`/api/results?id=${id}`);
-        const data = await res.json();
-        setResults(data.results || null);
-      } catch (err) {
-        console.error(err);
-      } finally {
-        setLoading(false);
-      }
-    }
-
-    fetchResults();
-  }, [id]);
-
-  if (loading) {
-    return (
-      <div className="center">
-        <h2>Loading Results...</h2>
-      </div>
-    );
-  }
-
-  if (!results) {
-    return (
-      <div className="center">
-        <h2>No results found.</h2>
-      </div>
-    );
-  }
-
-  return (
-    <div className="results-container">
-      <h1>Scan Results</h1>
-
-      <ResultCard title="Roblox Logs" value={results.robloxLogs} />
-      <ResultCard title="Factory Reset" value={results.factoryReset} />
-      <ResultCard title="Services" value={results.services} />
-      <ResultCard title="Cheat Scan" value={results.cheatScan} />
-      <ResultCard title="Advanced Scan" value={results.advancedScan} />
-      <ResultCard title="Unsigned Executables" value={results.unsignedExecutables} />
-    </div>
-  );
+.trinity-results {
+  max-width: 950px;
+  margin: 70px auto;
+  color: white;
 }
 
-function ResultCard({ title, value }: { title: string; value?: string }) {
-  return (
-    <div className="result-card">
-      <h3>{title}</h3>
-      <p>{value || "No data"}</p>
-    </div>
-  );
+.trinity-results h1 {
+  font-size: 38px;
+  margin-bottom: 26px;
+}
+
+.trinity-card {
+  background: #0b0e14;
+  border: 1px solid #1d2636;
+  border-radius: 18px;
+  padding: 18px 20px;
+  margin-bottom: 18px;
+  transition: all 0.25s ease;
+}
+
+.trinity-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 0 20px rgba(47,129,247,0.15);
+}
+
+.card-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 10px;
+}
+
+.card-header h3 {
+  font-size: 20px;
+}
+
+.icon {
+  font-size: 20px;
+}
+
+/* STATUS COLORS */
+
+.trinity-card.clean {
+  border-color: #1eb673;
+}
+
+.trinity-card.clean .icon {
+  color: #1eb673;
+}
+
+.trinity-card.warning {
+  border-color: #f5c451;
+}
+
+.trinity-card.warning .icon {
+  color: #f5c451;
+}
+
+.trinity-card.danger {
+  border-color: #ff5c5c;
+}
+
+.trinity-card.danger .icon {
+  color: #ff5c5c;
+}
+
+.trinity-card pre {
+  color: #cfd8dc;
+  font-size: 14px;
+  white-space: pre-wrap;
+  margin-top: 6px;
+}
+
+.center {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 70vh;
+  color: white;
 }
