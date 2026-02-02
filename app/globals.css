@@ -33,7 +33,7 @@ body {
   width: 900px;
   height: 700px;
   border-radius: 9999px;
-  background: rgba(16, 185, 129, 0.15);
+  background: rgba(59, 130, 246, 0.15); /* Match Dashboard Blue */
   filter: blur(120px);
   animation: glowMove 18s ease-in-out infinite !important;
 }
@@ -47,8 +47,43 @@ body {
 }
 
 /* ============================
-   TRINITY MODAL & BUTTONS
+   RESULTS PAGE & MODAL STYLES
 ============================ */
+.results-container {
+  max-width: 900px;
+  margin: 60px auto;
+  color: white;
+}
+
+.result-card {
+  background: #0b0e14;
+  border: 1px solid #1d2636;
+  border-radius: 14px;
+  padding: 18px;
+  margin-bottom: 14px;
+  transition: all 0.2s ease;
+}
+
+.result-card:hover {
+  border-color: #2f81f7;
+  background: #0f141b;
+}
+
+.result-card h3 {
+  color: #2f81f7;
+  margin-bottom: 6px;
+  font-weight: 600;
+}
+
+.center {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 70vh;
+  color: white;
+}
+
+/* Modal Specifics */
 .results-btn {
   padding: 6px 14px;
   border-radius: 10px;
@@ -59,11 +94,6 @@ body {
   font-size: 0.75rem;
   font-weight: 600;
   transition: all 0.2s;
-}
-
-.results-btn:hover {
-  background: #1a2232;
-  border-color: #3d495d;
 }
 
 .results-overlay {
@@ -92,12 +122,6 @@ body {
   flex-direction: column;
 }
 
-.results-modal h2 {
-  font-size: 1.25rem;
-  margin-bottom: 1rem;
-  color: #2f81f7;
-}
-
 .results-modal pre {
   background: #05070a;
   padding: 15px;
@@ -108,15 +132,4 @@ body {
   overflow: auto;
   white-space: pre-wrap;
   border: 1px solid #1d2636;
-}
-
-.close-btn-modal {
-  margin-top: 1rem;
-  padding: 8px 20px;
-  background: #1f2937;
-  border-radius: 8px;
-  border: 1px solid #374151;
-  color: white;
-  cursor: pointer;
-  align-self: flex-end;
 }
