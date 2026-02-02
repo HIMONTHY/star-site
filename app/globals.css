@@ -33,7 +33,7 @@ body {
   width: 900px;
   height: 700px;
   border-radius: 9999px;
-  background: rgba(59, 130, 246, 0.15); /* Match Dashboard Blue */
+  background: rgba(59, 130, 246, 0.15); 
   filter: blur(120px);
   animation: glowMove 18s ease-in-out infinite !important;
 }
@@ -47,32 +47,80 @@ body {
 }
 
 /* ============================
-   RESULTS PAGE & MODAL STYLES
+   TRINITY RESULTS PAGE
 ============================ */
-.results-container {
-  max-width: 900px;
-  margin: 60px auto;
+.trinity-results {
+  max-width: 950px;
+  margin: 70px auto;
   color: white;
+  padding: 0 20px;
 }
 
-.result-card {
+.trinity-results h1 {
+  font-size: 38px;
+  margin-bottom: 26px;
+  font-weight: 800;
+  letter-spacing: -1px;
+}
+
+.trinity-card {
   background: #0b0e14;
   border: 1px solid #1d2636;
-  border-radius: 14px;
-  padding: 18px;
-  margin-bottom: 14px;
-  transition: all 0.2s ease;
+  border-radius: 18px;
+  padding: 18px 20px;
+  margin-bottom: 18px;
+  transition: all 0.25s ease;
 }
 
-.result-card:hover {
-  border-color: #2f81f7;
-  background: #0f141b;
+.trinity-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 0 20px rgba(47, 129, 247, 0.15);
 }
 
-.result-card h3 {
-  color: #2f81f7;
-  margin-bottom: 6px;
+.card-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 10px;
+}
+
+.card-header h3 {
+  font-size: 20px;
   font-weight: 600;
+}
+
+.icon {
+  font-size: 20px;
+}
+
+/* STATUS COLORS */
+.trinity-card.clean {
+  border-color: #1eb673;
+}
+.trinity-card.clean .icon {
+  color: #1eb673;
+}
+
+.trinity-card.warning {
+  border-color: #f5c451;
+}
+.trinity-card.warning .icon {
+  color: #f5c451;
+}
+
+.trinity-card.danger {
+  border-color: #ff5c5c;
+}
+.trinity-card.danger .icon {
+  color: #ff5c5c;
+}
+
+.trinity-card pre {
+  color: #cfd8dc;
+  font-size: 14px;
+  white-space: pre-wrap;
+  margin-top: 6px;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
 }
 
 .center {
@@ -81,55 +129,4 @@ body {
   align-items: center;
   height: 70vh;
   color: white;
-}
-
-/* Modal Specifics */
-.results-btn {
-  padding: 6px 14px;
-  border-radius: 10px;
-  background: #111827;
-  border: 1px solid #2b3446;
-  color: #2f81f7;
-  cursor: pointer;
-  font-size: 0.75rem;
-  font-weight: 600;
-  transition: all 0.2s;
-}
-
-.results-overlay {
-  position: fixed;
-  inset: 0;
-  z-index: 100;
-  background: rgba(0, 0, 0, 0.75);
-  backdrop-filter: blur(4px);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  padding: 20px;
-}
-
-.results-modal {
-  width: 100%;
-  max-width: 600px;
-  max-height: 80vh;
-  background: #0b0e14;
-  border: 1px solid #1d2636;
-  border-radius: 16px;
-  padding: 24px;
-  color: white;
-  overflow: hidden;
-  display: flex;
-  flex-direction: column;
-}
-
-.results-modal pre {
-  background: #05070a;
-  padding: 15px;
-  border-radius: 8px;
-  font-family: ui-monospace, monospace;
-  font-size: 12px;
-  color: #cbd5e1;
-  overflow: auto;
-  white-space: pre-wrap;
-  border: 1px solid #1d2636;
 }
