@@ -62,7 +62,7 @@ export default function HomePage() {
             <a className="hover:text-white" href="#features">Features</a>
             <Link className="hover:text-white" href="/terms">Terms</Link>
             <Link className="hover:text-white" href="/faq">FAQ</Link>
-            <a className="hover:text-white" href="https://discord.gg/6PWnVgNRp4" target="_blank" rel="noreferrer">Discord</a>
+            <a className="hover:text-white" href="https://discord.gg/QrpjeRfTfr" target="_blank" rel="noreferrer">Discord</a>
           </nav>
 
           <div className="flex items-center gap-3">
@@ -93,7 +93,7 @@ export default function HomePage() {
           </div>
           <div className="mt-8 flex flex-col sm:flex-row justify-center gap-3">
             <Link href="/dashboard" className="rounded-xl bg-blue-500 px-7 py-3 font-semibold text-black hover:opacity-90">Get Started</Link>
-            <a href="https://discord.gg/rHy3W7Za" target="_blank" rel="noreferrer" className="rounded-xl border border-blue-400/40 bg-blue-500/10 px-7 py-3 font-semibold text-blue-200 hover:bg-blue-500/15">Join Discord</a>
+            <a href="https://discord.gg/QrpjeRfTfrr" target="_blank" rel="noreferrer" className="rounded-xl border border-blue-400/40 bg-blue-500/10 px-7 py-3 font-semibold text-blue-200 hover:bg-blue-500/15">Join Discord</a>
           </div>
           <div className="mt-14 grid gap-6 sm:grid-cols-3">
             <Stat value="500+" label="ACTIVE USERS" />
