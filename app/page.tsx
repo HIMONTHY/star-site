@@ -1,3 +1,5 @@
+"use client";
+
 import React, { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 
@@ -14,7 +16,7 @@ function useReveal() {
       ([entry]) => {
         if (entry.isIntersecting) {
           setVisible(true);
-          observer.disconnect(); // Only animate once
+          observer.disconnect(); // Only animate once for performance
         }
       },
       { threshold: 0.12 }
@@ -153,7 +155,7 @@ export default function HomePage() {
 
 /* HELPER COMPONENTS WITH ANIMATION */
 
-function WhyCard({ icon, title, desc }: { icon: any; title: string; desc: string }) {
+function WhyCard({ icon, title, desc }: { icon: string; title: string; desc: string }) {
   const { ref, visible } = useReveal();
   return (
     <div
@@ -213,14 +215,14 @@ function Stat({ value, label }: { value: string; label: string }) {
   );
 }
 
-/* ICONS & PARTICLES (Keep these at the bottom) */
+/* ICONS & PARTICLES */
 
-function ShieldIcon() { return <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M12 2l8 4v6c0 5-3.4 9.4-8 10-4.6-.6-8-5-8-10V6l8-4z" /></svg>; }
-function EyeIcon() { return <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12z" /><circle cx="12" cy="12" r="3" /></svg>; }
-function BoltIcon() { return <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M13 2L3 14h7l-1 8 12-14h-7l-1-6z" /></svg>; }
-function RefreshIcon() { return <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M21 12a9 9 0 10-2.6 6.4M21 3v6h-6" /></svg>; }
-function ClockIcon() { return <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="12" cy="12" r="9" /><path d="M12 7v6l4 2" /></svg>; }
-function HeadsetIcon() { return <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M4 12a8 8 0 0116 0v7a2 2 0 01-2 2h-2M4 12v5a2 2 0 002 2h2v-7H6a2 2 0 00-2 2zM20 12v5a2 2 0 01-2 2h-2v-7h2a2 2 0 012 2z" /></svg>; }
+function ShieldIcon() { return <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinejoin="round"><path d="M12 2l8 4v6c0 5-3.4 9.4-8 10-4.6-.6-8-5-8-10V6l8-4z" /></svg>; }
+function EyeIcon() { return <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinejoin="round"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12z" /><circle cx="12" cy="12" r="3" /></svg>; }
+function BoltIcon() { return <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinejoin="round"><path d="M13 2L3 14h7l-1 8 12-14h-7l-1-6z" /></svg>; }
+function RefreshIcon() { return <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 12a9 9 0 10-2.6 6.4M21 3v6h-6" /></svg>; }
+function ClockIcon() { return <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><circle cx="12" cy="12" r="9" /><path d="M12 7v6l4 2" /></svg>; }
+function HeadsetIcon() { return <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M4 12a8 8 0 0116 0v7a2 2 0 01-2 2h-2M4 12v5a2 2 0 002 2h2v-7H6a2 2 0 00-2 2zM20 12v5a2 2 0 01-2 2h-2v-7h2a2 2 0 012 2z" /></svg>; }
 
 function Particles() {
   const dots = Array.from({ length: 40 }, (_, i) => i);
