@@ -1,6 +1,6 @@
 import React from "react";
 
-/** * STAR DASHBOARD FULL CODE
+/** * STAR DASHBOARD FULL CODE (TypeScript Version)
  * Updated: Feb 3, 2026
  */
 
@@ -186,9 +186,9 @@ export default function HomePage() {
   );
 }
 
-// --- SUB-COMPONENTS ---
+// --- SUB-COMPONENTS WITH TYPES ---
 
-function Chip({ children }) {
+function Chip({ children }: { children: React.ReactNode }) {
   return (
     <span className="inline-flex items-center gap-2 rounded-full border border-blue-400/25 bg-blue-500/10 px-4 py-2 text-xs text-blue-100">
       <span className="h-2 w-2 rounded-full bg-blue-400/70" />
@@ -197,7 +197,7 @@ function Chip({ children }) {
   );
 }
 
-function Stat({ value, label }) {
+function Stat({ value, label }: { value: string; label: string }) {
   return (
     <div className="rounded-2xl border border-white/10 bg-white/5 p-6 transition hover:border-white/20">
       <div className="text-3xl font-black text-blue-300">{value}</div>
@@ -206,7 +206,7 @@ function Stat({ value, label }) {
   );
 }
 
-function FeatureCard({ title, desc }) {
+function FeatureCard({ title, desc }: { title: string; desc: string }) {
   return (
     <div className="rounded-2xl border border-white/10 bg-black/30 p-5 transition hover:border-blue-400/20">
       <div className="text-lg font-semibold">{title}</div>
@@ -215,7 +215,9 @@ function FeatureCard({ title, desc }) {
   );
 }
 
-function WhyCard({ icon, title, desc }) {
+type IconType = "shield" | "eye" | "bolt" | "refresh" | "clock" | "headset";
+
+function WhyCard({ icon, title, desc }: { icon: IconType; title: string; desc: string }) {
   return (
     <div className="rounded-2xl border border-white/10 bg-black/30 p-6 shadow-[0_30px_120px_rgba(59,130,246,0.06)] hover:border-blue-400/25 transition group">
       <div className="h-12 w-12 rounded-xl border border-blue-400/20 bg-blue-500/10 grid place-items-center text-blue-300 group-hover:scale-110 transition">
@@ -247,7 +249,7 @@ function Particles() {
             top: `${(i * 53) % 100}%`,
             animationDelay: `${(i % 10) * 0.5}s`,
             opacity: 0.1 + (i % 5) * 0.05,
-          }}
+          } as React.CSSProperties}
         />
       ))}
     </div>
