@@ -62,7 +62,7 @@ export default function HomePage() {
             <a className="hover:text-white" href="#features">Features</a>
             <Link className="hover:text-white" href="/terms">Terms</Link>
             <Link className="hover:text-white" href="/faq">FAQ</Link>
-            <a className="hover:text-white" href="https://discord.gg/rHy3W7Za" target="_blank" rel="noreferrer">Discord</a>
+            <a className="hover:text-white" href="https://discord.gg/6PWnVgNRp4" target="_blank" rel="noreferrer">Discord</a>
           </nav>
 
           <div className="flex items-center gap-3">
