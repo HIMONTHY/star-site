@@ -17,12 +17,12 @@ export default function TermsPage() {
           </p>
 
           <p>
-            This tool is provided to aid in the screensharing process and no
+            This tool is provided to aid in the bypass process and no
             information will be distributed by the owner of the software.
           </p>
 
           <p>
-            If the league or individual using the software on you is NOT listed
+            If the individual using the software is NOT listed
             or has received proper authorization, please report it immediately
             by DMing Discord user:
           </p>
